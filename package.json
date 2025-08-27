@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "bootstrap": "^5.3.7",
+    "react-bootstrap": "^2.10.10",
+    "react-paginate": "^8.3.0",
+    "axios": "^1.9.0"
+  }
+}

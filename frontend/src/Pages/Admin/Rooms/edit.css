@@ -1,0 +1,111 @@
+/* --- General Styling & Animations (Nếu bạn đã có từ trước, hãy xem xét cập nhật hoặc bỏ qua) --- */
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f8f9fa; /* Nền sáng nhẹ nhàng */
+}
+
+/* Màu sắc chính cho ứng dụng */
+.text-primary {
+    color: #007bff !important; /* Màu xanh dương hiện đại */
+}
+/* Hoặc một màu khác nếu bạn thích, ví dụ: */
+/* .text-primary { color: #6c5ce7 !important; } */
+
+.custom-add-btn { /* Nút thêm phòng mới trên trang list */
+    background-color: #28a745 !important;
+    border-color: #28a745 !important;
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
+    transition: all 0.3s ease;
+}
+.custom-add-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(40, 167, 69, 0.3);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+}
+
+/* --- EditRooms Component Specific Styles --- */
+
+.custom-form-edit-room {
+    border: 1px solid #e0e0e0; /* Viền nhẹ cho form */
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08); /* Đổ bóng nhẹ và tinh tế */
+}
+
+.form-label {
+    font-weight: 600; /* Làm nhãn đậm hơn */
+    color: #333; /* Màu chữ đậm hơn cho nhãn */
+    margin-bottom: 0.5rem;
+}
+
+.form-control-custom {
+    border-radius: 0.3rem; /* Bo tròn nhẹ các input */
+    padding: 0.75rem 1rem; /* Tăng padding cho input */
+    font-size: 1rem;
+    border: 1px solid #ced4da;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.form-control-custom:focus {
+    border-color: #007bff; /* Màu viền khi focus */
+    box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25); /* Đổ bóng nhẹ khi focus */
+}
+
+.form-control-custom::placeholder {
+    color: #a0a0a0; /* Màu placeholder mờ hơn */
+}
+
+/* Styling for buttons */
+.submit-btn-custom, .back-btn-custom {
+    padding: 0.75rem 1.8rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 0.5rem; /* Bo tròn hơn cho nút */
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.submit-btn-custom {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.submit-btn-custom:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 123, 255, 0.2);
+}
+
+.back-btn-custom {
+    background-color: #6c757d; /* Màu xám cho nút quay lại */
+    border-color: #6c757d;
+}
+
+.back-btn-custom:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(108, 117, 125, 0.2);
+}
+
+/* Preview Image */
+.custom-preview-img {
+    max-width: 200px; /* Kích thước ảnh preview */
+    height: auto;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

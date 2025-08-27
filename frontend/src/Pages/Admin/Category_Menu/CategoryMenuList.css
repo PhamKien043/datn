@@ -1,0 +1,398 @@
+/* Container & Header */
+.container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 100%;
+  padding: 0 15px;
+  margin: 0 auto;
+}
+
+.card {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-body h4 {
+  margin: 0;
+  color: #333;
+  font-weight: 600;
+  font-size: 24px;
+}
+
+.card-body .btn-success {
+  white-space: nowrap;
+  background-color: #28a745;
+  border-color: #28a745;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.card-body .btn-success:hover {
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+
+/* Filter inputs */
+.row.g-2 {
+  margin: 0 -5px;
+}
+
+.row.g-2 > [class*="col-"] {
+  padding: 0 5px;
+}
+
+.row.g-2 input,
+.row.g-2 select {
+  min-height: 38px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px 12px;
+  width: 100%;
+}
+
+.row.g-2 input:focus,
+.row.g-2 select:focus {
+  outline: none;
+  border-color: #4dabf7;
+  box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.2);
+}
+
+/* Table */
+.table-responsive {
+  overflow-x: auto;
+  border-radius: 8px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+  text-align: left;
+  vertical-align: middle;
+  padding: 12px 15px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.text-truncate {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Badge */
+.badge {
+  font-size: 0.9em;
+  padding: 0.5em 1em;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* Action buttons */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-action {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  font-size: 0.9em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.btn-action .icon {
+  font-size: 1em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Colors */
+.btn-view { 
+  background-color: #17a2b8; 
+  color: white; 
+}
+.btn-view:hover { 
+  background-color: #138496; 
+}
+
+.btn-edit { 
+  background-color: #ffc107; 
+  color: black; 
+}
+.btn-edit:hover { 
+  background-color: #e0a800; 
+}
+
+.btn-delete { 
+  background-color: #dc3545; 
+  color: white; 
+}
+.btn-delete:hover { 
+  background-color: #c82333; 
+}
+
+/* Spinner & Alerts */
+.my-5 {
+  margin-top: 3rem !important;
+  margin-bottom: 3rem !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.pagination .page-item {
+  margin: 0 2px;
+}
+
+.pagination .page-link {
+  padding: 6px 12px;
+  border: 1px solid #dee2e6;
+  background-color: #fff;
+  color: #007bff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pagination .page-link:hover {
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+
+/* Tablet */
+@media screen and (max-width: 1024px) {
+  .container {
+    padding: 0 10px;
+  }
+  
+  .card-body {
+    padding: 15px;
+  }
+  
+  .text-truncate {
+    max-width: 150px;
+  }
+  
+  th, td {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+  
+  .btn-action {
+    padding: 5px 10px;
+    font-size: 0.85em;
+  }
+}
+
+/* Mobile */
+@media screen and (max-width: 768px) {
+  .container {
+    padding: 0 8px;
+  }
+  
+  .card-body {
+    padding: 12px;
+  }
+  
+  .card-body h4 {
+    font-size: 20px;
+  }
+  
+  /* Ẩn các cột không quan trọng trên mobile */
+  table th:nth-child(3),
+  table td:nth-child(3),
+  table th:nth-child(4),
+  table td:nth-child(4) {
+    display: none;
+  }
+  
+  /* Điều chỉnh độ rộng cột */
+  table th:nth-child(1),
+  table td:nth-child(1) {
+    width: 15%;
+  }
+  
+  table th:nth-child(2),
+  table td:nth-child(2) {
+    width: 45%;
+  }
+  
+  table th:nth-child(5),
+  table td:nth-child(5) {
+    width: 40%;
+  }
+  
+  th, td {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+  
+  .action-buttons {
+    gap: 4px;
+  }
+  
+  .btn-action {
+    padding: 4px 8px;
+    font-size: 0.8em;
+  }
+  
+  .btn-action .icon {
+    font-size: 1.1em;
+  }
+  
+  .btn-action span:not(.icon) {
+    display: none;
+  }
+  
+  .text-truncate {
+    max-width: 120px;
+  }
+  
+  .row.g-2 input,
+  .row.g-2 select {
+    min-height: 36px;
+    font-size: 14px;
+  }
+}
+
+/* Small Mobile */
+@media screen and (max-width: 480px) {
+  .container {
+    padding: 0 5px;
+  }
+  
+  .card-body {
+    padding: 10px;
+  }
+  
+  .card-body h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  th, td {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+  
+  .btn-action {
+    padding: 3px 6px;
+    font-size: 0.75em;
+  }
+  
+  .btn-action .icon {
+    font-size: 1em;
+  }
+  
+  .text-truncate {
+    max-width: 100px;
+  }
+  
+  /* Ẩn thêm cột nếu cần */
+  table th:nth-child(2),
+  table td:nth-child(2) {
+    width: 35%;
+  }
+  
+  table th:nth-child(5),
+  table td:nth-child(5) {
+    width: 50%;
+  }
+  
+  .pagination {
+    gap: 3px;
+  }
+  
+  .pagination .page-link {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+}
+
+/* Extra small devices */
+@media screen and (max-width: 360px) {
+  th, td {
+    padding: 5px 6px;
+    font-size: 11px;
+  }
+  
+  .btn-action {
+    padding: 2px 4px;
+  }
+  
+  .btn-action .icon {
+    font-size: 0.9em;
+  }
+  
+  .text-truncate {
+    max-width: 80px;
+  }
+  
+  table th:nth-child(1),
+  table td:nth-child(1) {
+    width: 20%;
+  }
+  
+  table th:nth-child(2),
+  table td:nth-child(2) {
+    width: 30%;
+  }
+  
+  table th:nth-child(5),
+  table td:nth-child(5) {
+    width: 50%;
+  }
+}

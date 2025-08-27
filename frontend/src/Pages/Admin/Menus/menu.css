@@ -1,0 +1,263 @@
+/* menu.css */
+
+.menus-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.header-section h2 {
+  margin: 0 0 10px 0;
+  flex: 1 1 auto;
+}
+
+.btn-add {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.btn-add:hover {
+  background-color: #0056b3;
+}
+
+.menus-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.menus-actions input[type="text"],
+.menus-actions input[type="number"] {
+  flex: 1 1 200px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.loading-text,
+.no-data {
+  text-align: center;
+  font-size: 1.1em;
+  color: #555;
+  margin-top: 40px;
+}
+
+.menus-table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow-x: auto;
+}
+
+.menus-table th,
+.menus-table td {
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.menu-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.no-image {
+  color: #999;
+  font-style: italic;
+}
+
+.status-active {
+  color: green;
+  font-weight: 600;
+}
+
+.status-inactive {
+  color: red;
+  font-weight: 600;
+}
+
+.action-buttons button {
+  margin: 0 2px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+.btn-view {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.btn-view:hover {
+  background-color: #117a8b;
+}
+
+.btn-edit {
+  background-color: #ffc107;
+  color: black;
+}
+
+.btn-edit:hover {
+  background-color: #d39e00;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #a71d2a;
+}
+
+.pagination {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.pagination button,
+.pagination .page-nav {
+  padding: 6px 12px;
+  border: 1px solid #007bff;
+  background-color: white;
+  color: #007bff;
+  cursor: pointer;
+  border-radius: 4px;
+  min-width: 36px;
+}
+
+.pagination button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.pagination button:disabled,
+.pagination .page-nav:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+
+@media screen and (max-width: 1024px) {
+  .menus-actions input[type="text"],
+  .menus-actions input[type="number"] {
+    flex: 1 1 45%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .menus-table th:nth-child(5), /* Loại menu ID */
+  .menus-table td:nth-child(5),
+  .menus-table th:nth-child(6), /* Loại menu */
+  .menus-table td:nth-child(6) {
+    display: none;
+  }
+
+  .menus-table th,
+  .menus-table td {
+    font-size: 12px;
+    padding: 6px 5px;
+  }
+
+  .menu-image {
+    width: 40px;
+    height: 40px;
+  }
+
+  .action-buttons button {
+    padding: 3px 6px;
+    font-size: 0.75em;
+  }
+
+  .header-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn-add {
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .menus-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .menus-actions input[type="text"],
+  .menus-actions input[type="number"] {
+    flex: 1 1 100%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .menus-table th:nth-child(4), /* Giá */
+  .menus-table td:nth-child(4),
+  .menus-table th:nth-child(6), /* Trạng thái */
+  .menus-table td:nth-child(6) {
+    display: none;
+  }
+
+  .pagination button,
+  .pagination .page-nav {
+    padding: 5px 8px;
+    min-width: 30px;
+    font-size: 0.8em;
+  }
+
+  /* Mobile tối ưu cho cột hành động */
+  .action-buttons {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .action-buttons button {
+    padding: 4px 6px;
+    font-size: 0.7em; /* nhỏ gọn nhưng vẫn đọc được */
+    min-width: auto;
+    white-space: nowrap; /* không xuống dòng */
+  }
+
+  /* Luôn hiển thị cột hành động */
+  .menus-table th:last-child,
+  .menus-table td:last-child {
+    display: table-cell;
+  }
+
+  /* Bỏ icon ::after và text-indent, hiển thị cả chữ + icon */
+  .action-buttons .btn-view::after,
+  .action-buttons .btn-edit::after,
+  .action-buttons .btn-delete::after {
+    content: none;
+  }
+  .action-buttons .btn-view,
+  .action-buttons .btn-edit,
+  .action-buttons .btn-delete {
+    text-indent: 0;
+    overflow: visible;
+  }
+}

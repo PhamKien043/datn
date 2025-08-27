@@ -1,0 +1,97 @@
+/******* Customized Bootstrap ********/
+
+$primary: #D4A762;
+$secondary: #9A9A9A;
+$light: #FFFCF8;
+$dark: #050709;
+
+$font-family-base: 'Open Sans', sans-serif;
+
+$headings-font-family: 'Playball', cursive;
+
+$body-color: $secondary;
+
+$headings-color: $dark;
+
+$headings-font-weight: 600;
+
+$display-font-weight: 400;
+
+$enable-responsive-font-sizes: true;
+
+$border-radius: 8px;
+
+$border-radius-sm: $border-radius;
+
+$border-radius-lg: $border-radius;
+
+$link-decoration: none;
+
+$enable-negative-margins: true;
+
+/* Card tổng thể */
+.service-card {
+  border: 1px solid #edf2f7;
+  box-shadow: 0 10px 24px rgba(2, 8, 23, 0.06);
+  overflow: hidden;
+  transition: transform .2s ease, box-shadow .2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(2, 8, 23, 0.12);
+  }
+}
+
+/* Khung ảnh lớn, giữ tỉ lệ 4:3 để ảnh nhìn đã mắt */
+.service-thumb {
+  position: relative;
+  width: 100%;
+  padding-top: 75%; /* 4:3 = 0.75 */
+  background: #f8fafc;
+
+  img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* phóng vừa khung, không méo */
+  }
+}
+
+/* Badge danh mục dạng kính mờ */
+.service-badge {
+  position: absolute;
+  left: .75rem;
+  top: .75rem;
+  padding: .35rem .6rem;
+  border-radius: 999px;
+  font-size: .8rem;
+  background: rgba(255, 255, 255, .85);
+  border: 1px solid rgba(15, 23, 42, .08);
+  backdrop-filter: blur(6px);
+  color: #0f172a;
+}
+
+/* Thân card */
+.service-body {
+  padding: 1rem 1rem 1.1rem;
+}
+
+.service-title {
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.25;
+}
+
+/* Mô tả rút gọn 2-3 dòng để bố cục gọn */
+.service-desc {
+  color: #475569;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* đổi 2-3 tuỳ ý */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 3.2em;
+}
+
+
+@import "bootstrap/scss/bootstrap";

@@ -1,0 +1,407 @@
+/* rooms.css */
+
+.menus-container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background-color: #fff;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header-section h2 {
+  margin: 0;
+  color: #333;
+  font-weight: 600;
+  font-size: 24px;
+}
+
+.menus-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  background-color: #fff;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.menus-actions input,
+.menus-actions select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 200px;
+}
+
+.menus-actions input:focus,
+.menus-actions select:focus {
+  outline: none;
+  border-color: #4dabf7;
+  box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.2);
+}
+
+.btn-add {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-add:hover {
+  background-color: #218838;
+}
+
+.btn-outline-warning {
+  background-color: transparent;
+  color: #ffc107;
+  border: 1px solid #ffc107;
+}
+
+.btn-outline-warning:hover {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.menus-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.menus-table thead {
+  background-color: #f8f9fa;
+}
+
+.menus-table th {
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.menus-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #e9ecef;
+  color: #212529;
+  vertical-align: middle;
+}
+
+.menus-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.status-active {
+  color: #28a745;
+  font-weight: 500;
+}
+
+.status-inactive {
+  color: #dc3545;
+  font-weight: 500;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-view, .btn-edit, .btn-delete {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-view {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.btn-view:hover {
+  background-color: #138496;
+}
+
+.btn-edit {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.btn-edit:hover {
+  background-color: #e0a800;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 6px 12px;
+  border: 1px solid #dee2e6;
+  background-color: #fff;
+  color: #007bff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+}
+
+.pagination button.active {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+.pagination button:disabled {
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+.no-data {
+  text-align: center;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  color: #6c757d;
+  font-style: italic;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.room-image {
+  width: 100px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.text-muted {
+  color: #6c757d !important;
+}
+
+/* Modal styles - Sửa thành class cụ thể hơn */
+.room-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.room-modal-content {
+  background-color: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.room-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.room-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.room-modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #6c757d;
+}
+
+.room-modal-body {
+  padding: 20px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.room-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 15px 20px;
+}
+
+.room-btn-secondary {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.room-btn-secondary:hover:not(:disabled) {
+  background-color: #5a6268;
+}
+
+.room-btn-secondary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Spinner styles */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Responsive styles - Mobile First */
+@media (max-width: 768px) {
+  .header-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .menus-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .menus-actions input,
+  .menus-actions select {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .menus-table {
+    display: block;
+    overflow-x: auto;
+  }
+  
+  .action-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .room-image {
+    width: 80px;
+    height: 60px;
+  }
+}
+
+@media (max-width: 576px) {
+  .menus-container {
+    padding: 10px;
+  }
+  
+  .header-section, .menus-actions {
+    padding: 12px;
+  }
+  
+  .menus-table th,
+  .menus-table td {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+  
+  /* Ẩn các cột không cần thiết trên mobile */
+  .d-none.d-md-table-cell {
+    display: none !important;
+  }
+  
+  /* Chỉ hiển thị 3 cột trên mobile: STT, Tên phòng, Hành động */
+  .menus-table th:nth-child(3),
+  .menus-table td:nth-child(3),
+  .menus-table th:nth-child(4),
+  .menus-table td:nth-child(4),
+  .menus-table th:nth-child(5),
+  .menus-table td:nth-child(5),
+  .menus-table th:nth-child(6),
+  .menus-table td:nth-child(6),
+  .menus-table th:nth-child(7),
+  .menus-table td:nth-child(7) {
+    display: none;
+  }
+  
+  /* Điều chỉnh độ rộng các cột hiển thị */
+  .menus-table th:nth-child(1),
+  .menus-table td:nth-child(1) {
+    width: 10%;
+  }
+  
+  .menus-table th:nth-child(2),
+  .menus-table td:nth-child(2) {
+    width: 40%;
+  }
+  
+  .menus-table th:nth-child(8),
+  .menus-table td:nth-child(8) {
+    width: 50%;
+  }
+  
+  .btn-view, .btn-edit, .btn-delete {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+  
+  .room-image {
+    width: 60px;
+    height: 50px;
+  }
+  
+  .room-modal-content {
+    width: 95%;
+    margin: 10px;
+  }
+}

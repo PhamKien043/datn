@@ -1,0 +1,15 @@
+.register-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e0f7fa, #ffffff);
+  }
+  
+  .register-card {
+    width: 100%;
+    max-width: 450px;
+    background-color: #fff;
+    border-radius: 12px;
+  }
+  

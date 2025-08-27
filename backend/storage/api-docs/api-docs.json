@@ -1,0 +1,1039 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "DATN API Documentation",
+        "description": "Tài liệu API cho hệ thống tổ chức tiệc & sự kiện",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Laravel Local Server"
+        }
+    ],
+    "paths": {
+        "/api/category_events": {
+            "get": {
+                "tags": [
+                    "CategoryEvents"
+                ],
+                "summary": "Lấy danh sách danh mục sự kiện",
+                "operationId": "aebe15030a5eb31e9fb4b85b5f96c783",
+                "responses": {
+                    "200": {
+                        "description": "Thành công"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "CategoryEvents"
+                ],
+                "summary": "Thêm danh mục sự kiện mới",
+                "operationId": "2048fb6cd3e46d305475abee6e5f9e3d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Tiệc sinh nhật"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Tổ chức sinh nhật"
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tạo thành công"
+                    }
+                }
+            }
+        },
+        "/api/category_events/{id}": {
+            "get": {
+                "tags": [
+                    "CategoryEvents"
+                ],
+                "summary": "Lấy chi tiết danh mục",
+                "operationId": "cadf49b383360d738b5bb15e950468ef",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "CategoryEvents"
+                ],
+                "summary": "Cập nhật danh mục",
+                "operationId": "b3119d06abdc8bf62bdcab404c036a78",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Tiệc cưới"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Cập nhật mô tả"
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": false
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật thành công"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "CategoryEvents"
+                ],
+                "summary": "Xoá danh mục",
+                "operationId": "344f571fc4935bf30023ed6a77bcb62b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xoá thành công"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy"
+                    }
+                }
+            }
+        },
+        "/api/employees": {
+            "get": {
+                "tags": [
+                    "Employees"
+                ],
+                "summary": "Danh sách nhân viên",
+                "operationId": "b9b73e1873c5fe36b951f014f711e4fa",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Employees"
+                ],
+                "summary": "Tạo mới nhân viên",
+                "operationId": "781d9d682a574c5e2c1dab17f782b5cd",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "full_name": {
+                                        "type": "string",
+                                        "example": "Nguyễn Văn A"
+                                    },
+                                    "age": {
+                                        "type": "integer",
+                                        "example": 30
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "Phục vụ"
+                                    },
+                                    "status": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tạo thành công"
+                    }
+                }
+            }
+        },
+        "/api/employees/{id}": {
+            "get": {
+                "tags": [
+                    "Employees"
+                ],
+                "summary": "Chi tiết nhân viên",
+                "operationId": "de09c8d9afb3f7114d227ad0645940ac",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thông tin nhân viên"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Employees"
+                ],
+                "summary": "Cập nhật nhân viên",
+                "operationId": "55e1ceec679a0d1436c869735e984a83",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "full_name": {
+                                        "type": "string",
+                                        "example": "Nguyễn Văn B"
+                                    },
+                                    "age": {
+                                        "type": "integer",
+                                        "example": 35
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "Tổ trưởng"
+                                    },
+                                    "status": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật thành công"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Employees"
+                ],
+                "summary": "Xóa nhân viên",
+                "operationId": "dc1326c2f6b4bed0201d62396ddfd970",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xóa thành công"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy"
+                    }
+                }
+            }
+        },
+        "/api/events": {
+            "get": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Lấy danh sách sự kiện",
+                "operationId": "e529c81e6aaec82f49950a87ed881f57",
+                "responses": {
+                    "200": {
+                        "description": "Thành công"
+                    }
+                }
+            }
+        },
+        "/api/events/{id}": {
+            "get": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Xem chi tiết sự kiện",
+                "operationId": "c0f602d773798994c228d99dbd63b842",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thành công"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy"
+                    }
+                }
+            }
+        },
+        "/api/roles": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Lấy danh sách vai trò",
+                "operationId": "ca86f0a206144dfbd695b749b4b28f9d",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách vai trò"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Tạo vai trò mới",
+                "operationId": "341b8b162b61267c7bd187500aea5bc4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "role_name": {
+                                        "type": "string",
+                                        "example": "admin"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Quản trị hệ thống"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tạo thành công"
+                    }
+                }
+            }
+        },
+        "/api/roles/{id}": {
+            "delete": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Xóa vai trò",
+                "operationId": "ffa6ef115d86b00cc6c54a6210019f9c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xóa thành công"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy"
+                    }
+                }
+            }
+        },
+        "/api/rooms": {
+            "get": {
+                "tags": [
+                    "Rooms"
+                ],
+                "summary": "Danh sách phòng",
+                "operationId": "db2a0f9c242ba089e87d5ae1fa8e14c5",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách các phòng"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Rooms"
+                ],
+                "summary": "Tạo phòng mới",
+                "operationId": "809158a6b73bac8545f93f5b9f8a8a8a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "room_name": {
+                                        "type": "string",
+                                        "example": "Phòng tiệc VIP"
+                                    },
+                                    "room_type": {
+                                        "type": "string",
+                                        "example": "Tiệc cưới"
+                                    },
+                                    "location": {
+                                        "type": "string",
+                                        "example": "Tầng 2"
+                                    },
+                                    "start_time": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-06-20 18:00:00"
+                                    },
+                                    "end_time": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-06-20 22:00:00"
+                                    },
+                                    "capacity": {
+                                        "type": "integer",
+                                        "example": 100
+                                    },
+                                    "table_count": {
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Phòng có không gian sang trọng"
+                                    },
+                                    "image": {
+                                        "type": "string",
+                                        "example": "room.jpg"
+                                    },
+                                    "status": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tạo phòng thành công"
+                    }
+                }
+            }
+        },
+        "/api/rooms/{id}": {
+            "get": {
+                "tags": [
+                    "Rooms"
+                ],
+                "summary": "Chi tiết phòng",
+                "operationId": "b1475eb28ef61d930c8d73dce18cd23c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thông tin phòng"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Rooms"
+                ],
+                "summary": "Cập nhật phòng",
+                "operationId": "0c313fa83b1cc3ffd17495d103f021e2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "room_name": {
+                                        "type": "string",
+                                        "example": "Phòng tiệc VIP"
+                                    },
+                                    "room_type": {
+                                        "type": "string",
+                                        "example": "Tiệc cưới"
+                                    },
+                                    "location": {
+                                        "type": "string",
+                                        "example": "Tầng 2"
+                                    },
+                                    "start_time": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-06-20 18:00:00"
+                                    },
+                                    "end_time": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-06-20 22:00:00"
+                                    },
+                                    "capacity": {
+                                        "type": "integer",
+                                        "example": 100
+                                    },
+                                    "table_count": {
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Phòng có không gian sang trọng"
+                                    },
+                                    "image": {
+                                        "type": "string",
+                                        "example": "room.jpg"
+                                    },
+                                    "status": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật thành công"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Rooms"
+                ],
+                "summary": "Xóa phòng",
+                "operationId": "4698523ee5dafa1ac652ef8ede5e96d4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Xóa thành công"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy"
+                    }
+                }
+            }
+        },
+        "/api/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Lấy danh sách người dùng",
+                "operationId": "566aed8efb436ca506e0ef51a032ecd9",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách user"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Tạo người dùng mới",
+                "operationId": "be551c1d694a01c164966f58bfa77013",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "username",
+                                    "email",
+                                    "password",
+                                    "phone",
+                                    "address",
+                                    "role_id"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Nguyễn Văn A"
+                                    },
+                                    "username": {
+                                        "type": "string",
+                                        "example": "vana123"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "vana@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "123456"
+                                    },
+                                    "phone": {
+                                        "type": "integer",
+                                        "example": 987654321
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "Cần Thơ"
+                                    },
+                                    "role_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tạo người dùng thành công"
+                    },
+                    "422": {
+                        "description": "Dữ liệu không hợp lệ"
+                    }
+                }
+            }
+        },
+        "/api/users/{id}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Xem chi tiết người dùng",
+                "operationId": "6f51bd5fa2dddcd25e44cfa53dcbd10a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID của người dùng",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Chi tiết người dùng"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy người dùng"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Cập nhật người dùng",
+                "operationId": "070e37fc9aff78ae73860751bc990ed3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Nguyễn Văn B"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "Hà Nội"
+                                    },
+                                    "role_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật thành công"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy người dùng"
+                    },
+                    "422": {
+                        "description": "Dữ liệu không hợp lệ"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Xoá người dùng theo ID",
+                "operationId": "0b4133ed462528a5e648b88ead11e929",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xoá thành công"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy người dùng"
+                    }
+                }
+            }
+        },
+        "/api/venues": {
+            "get": {
+                "tags": [
+                    "Venues"
+                ],
+                "summary": "Lấy danh sách địa điểm",
+                "operationId": "aba55e58a0a0a0892ce6001b0d94fcaa",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách venues"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Venues"
+                ],
+                "summary": "Tạo địa điểm mới",
+                "operationId": "49a0a5a0dee96e5fbcc13f973aae2053",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Sảnh cưới Riverside"
+                                    },
+                                    "image": {
+                                        "type": "string",
+                                        "example": "riverside.jpg"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Không gian ven sông sang trọng"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "123 Nguyễn Trãi, Q1, TP.HCM"
+                                    },
+                                    "capacity": {
+                                        "type": "integer",
+                                        "example": 200
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tạo thành công"
+                    }
+                }
+            }
+        },
+        "/api/venues/{id}": {
+            "get": {
+                "tags": [
+                    "Venues"
+                ],
+                "summary": "Chi tiết địa điểm",
+                "operationId": "1a0133cc7c019e24505e60fe6fa877d3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thông tin venue"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Venues"
+                ],
+                "summary": "Cập nhật địa điểm",
+                "operationId": "edce1d648e3919befa21a7a1d22b97a7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Sảnh cưới Royal"
+                                    },
+                                    "image": {
+                                        "type": "string",
+                                        "example": "royal.jpg"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Sảnh tiệc rộng rãi sang trọng"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "456 Lê Duẩn, Đà Nẵng"
+                                    },
+                                    "capacity": {
+                                        "type": "integer",
+                                        "example": 250
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật thành công"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Venues"
+                ],
+                "summary": "Xóa địa điểm",
+                "operationId": "3fddbfa7292e2f0ecbf5adb88853d6e6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xóa thành công"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Employees",
+            "description": "Quản lý nhân viên"
+        },
+        {
+            "name": "Roles",
+            "description": "API quản lý vai trò người dùng (roles)"
+        },
+        {
+            "name": "Venues",
+            "description": "API quản lý địa điểm tổ chức (venues)"
+        },
+        {
+            "name": "CategoryEvents",
+            "description": "CategoryEvents"
+        },
+        {
+            "name": "Events",
+            "description": "Events"
+        },
+        {
+            "name": "Rooms",
+            "description": "Rooms"
+        },
+        {
+            "name": "Users",
+            "description": "Users"
+        }
+    ]
+}

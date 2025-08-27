@@ -1,0 +1,137 @@
+/* Container & Header */
+.container {
+  font-family: Arial, sans-serif;
+}
+
+.card-body h4 {
+  margin: 0;
+}
+
+.card-body .btn-success {
+  white-space: nowrap;
+}
+
+/* Filter inputs */
+.row.g-2 input,
+.row.g-2 select {
+  min-height: 38px;
+}
+
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow-x: auto;
+}
+
+th, td {
+  text-align: center;
+  vertical-align: middle;
+  padding: 8px;
+}
+
+th {
+  background-color: #e9ecef;
+}
+
+.text-truncate {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Badge */
+.badge {
+  font-size: 0.9em;
+  padding: 0.5em 1em;
+}
+
+/* Action buttons */
+.action-buttons {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-action {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  font-size: 0.9em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-action .icon {
+  font-size: 1em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Colors */
+.btn-view { background-color: #17a2b8; color: white; }
+.btn-view:hover { background-color: #117a8b; }
+
+.btn-edit { background-color: #ffc107; color: black; }
+.btn-edit:hover { background-color: #d39e00; }
+
+.btn-delete { background-color: #dc3545; color: white; }
+.btn-delete:hover { background-color: #a71d2a; }
+
+/* Spinner & Alerts */
+.my-5 {
+  margin-top: 3rem !important;
+  margin-bottom: 3rem !important;
+}
+
+/* Pagination */
+.pagination {
+  justify-content: center;
+}
+
+/* Responsive */
+
+/* Tablet */
+@media screen and (max-width: 1024px) {
+  .text-truncate {
+    max-width: 150px;
+  }
+}
+
+/* Mobile */
+@media screen and (max-width: 480px) {
+  /* Ẩn text các cột Mô tả và Trạng thái */
+  table th:nth-child(3),
+  table td:nth-child(3),
+  table th:nth-child(4),
+  table td:nth-child(4) {
+    display: none;
+  }
+
+  /* Action buttons: chỉ hiển thị icon */
+  .btn-action {
+    padding: 4px;
+    font-size: 0.75em;
+  }
+
+  .btn-action .icon {
+    font-size: 1.2em;
+    margin: 0;
+  }
+
+  .btn-action span:not(.icon) {
+    display: none;
+  }
+
+  /* Table font nhỏ */
+  th, td {
+    font-size: 12px;
+    padding: 4px 5px;
+  }
+}

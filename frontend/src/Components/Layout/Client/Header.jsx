@@ -34,6 +34,7 @@ function Header() {
                                 <a href="/Service" className="nav-item nav-link">Dịch vụ</a>
                                 <a href="/Menu" className="nav-item nav-link">Thực đơn</a>
                                 <a href="/About" className="nav-item nav-link">Giới thiệu</a>
+                                <a href="/Blogs" className="nav-item nav-link">Bài viết</a>
                                 <a href="/Contact" className="nav-item nav-link">Liên hệ</a>
                             </div>
 

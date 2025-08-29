@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\Admin\VoucherAdminController;
 
 use App\Http\Controllers\Api\Admin\RoomsAdminController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\Admin\BlogAdminController;
+use App\Http\Controllers\Api\Admin\EmailAdminController;
 use App\Http\Controllers\API\CartDetailController;
 use App\Http\Controllers\Api\CategoryMenuController;
 use App\Http\Controllers\Api\CategoryServiceController;
@@ -24,6 +26,8 @@ use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\api\StatisticController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VnpayController;
+
+use App\Http\Controllers\Api\EmailController;
 
 use App\Http\Controllers\Api\VoucherController;
 use Illuminate\Http\Request;
@@ -62,6 +66,26 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('/dashboard', fn () => response()->json(['ok' => true]));
 
 });
+
+// Blog
+Route::prefix('admin')->group(function () {
+    Route::get('/blog', [BlogAdminController::class, 'index']);
+    Route::post('/blog', [BlogAdminController::class, 'store']);
+    Route::get('/blog/{id}', [BlogAdminController::class, 'show']);
+    Route::put('/blog/{id}', [BlogAdminController::class, 'update']);
+    Route::delete('/blog/{id}', [BlogAdminController::class, 'destroy']);
+    Route::post('/blog/check-name', [BlogAdminController::class, 'checkTitle']);
+});
+
+//Email
+Route::prefix('admin')->group(function () {
+    Route::get('/email', [EmailAdminController::class, 'index']);
+    Route::get('/email/{id}', [EmailAdminController::class, 'show']);
+    Route::get('/emails/unread-count', [EmailAdminController::class, 'getUnreadCount']);
+    Route::post('/emails/mark-read', [EmailAdminController::class, 'markAsRead']);
+});
+
+Route::post('/emails', [EmailController::class, 'store']);
 
 
 //Thanh Trúc

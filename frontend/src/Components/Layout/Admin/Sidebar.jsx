@@ -1,8 +1,30 @@
 import { Link, useLocation } from "react-router-dom";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { getUnreadCount, markEmailsAsRead } from "../../../services/emailAdmin";
 
 const Sidebar = () => {
     const location = useLocation();
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    // load số email chưa đọc
+    useEffect(() => {
+        const fetchUnread = async () => {
+            try {
+                const count = await getUnreadCount();
+                setUnreadCount(count);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        fetchUnread();
+        const interval = setInterval(fetchUnread, 10000); // refresh mỗi 10s
+        return () => clearInterval(interval);
+    }, []);
+
+    const handleEmailClick = async () => {
+        await markEmailsAsRead();
+        setUnreadCount(0);
+    };
 
     return (
         <aside className="main-sidebar sidebar-dark-primary elevation-4">
@@ -24,7 +46,7 @@ const Sidebar = () => {
 
                 {/* Sidebar Menu */}
                 <nav className="mt-2">
-                    <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                    <ul className="nav nav-pills nav-sidebar flex-column">
                         <SidebarItem to="/admin/history" icon="bi-clock-history" label="Quản lý đơn hàng" isActive={location.pathname === "/admin/history"} />
                         <SidebarItem to="/admin/schedule" icon="bi-clock-history" label="Quản lý lịch" isActive={location.pathname === "/admin/schedule"} />
                         <SidebarItem to="/admin/rooms" icon="bi-building" label="Quản lý phòng" isActive={location.pathname === "/admin/rooms"} />
@@ -33,10 +55,17 @@ const Sidebar = () => {
                         <SidebarItem to="/admin/category-menus" icon="bi-list-ul" label="Quản lý loại thực đơn" isActive={location.pathname.startsWith("/admin/category-menus")} />
                         <SidebarItem to="/admin/users" icon="bi-person" label="Quản lý người dùng" isActive={location.pathname === "/admin/users"} />
                         <SidebarItem to="/admin/voucher" icon="bi-ticket-perforated" label="Quản lý voucher" isActive={location.pathname === "/admin/voucher"} />
-                        {/*<SidebarItem to="/admin/Commnent" icon="bi-chat-dots" label="Bình luận" isActive={location.pathname === "/admin/Comment"} />*/}
-                        {/* Thêm quản lý đơn hàng */}
+                        <SidebarItem to="/admin/blogs" icon="bi-newspaper" label="Quản lý bài viết" isActive={location.pathname === "/admin/blogs"} />
 
-
+                        {/* 👇 Email có badge */}
+                        <SidebarItem
+                            to="/admin/emails"
+                            icon="bi-envelope"
+                            label="Quản lý email"
+                            isActive={location.pathname === "/admin/emails"}
+                            unreadCount={unreadCount}
+                            onClick={handleEmailClick}
+                        />
                         <SidebarItem to="/" icon="bi-box-arrow-right" label="Đăng xuất" isActive={location.pathname === "/"} />
                     </ul>
                 </nav>
@@ -45,11 +74,33 @@ const Sidebar = () => {
     );
 };
 
-const SidebarItem = ({ to, icon, label, isActive }) => (
+const SidebarItem = ({ to, icon, label, isActive, unreadCount, onClick }) => (
     <li className="nav-item">
-        <Link to={to} className={`nav-link ${isActive ? 'active' : ''}`}>
-            <i className={`nav-icon bi ${icon}`} />
-            <p>{label}</p>
+        <Link
+            to={to}
+            className={`nav-link d-flex align-items-center justify-content-between ${isActive ? "active" : ""}`}
+            onClick={onClick}
+        >
+            {/* Icon + label */}
+            <div className="d-flex align-items-center">
+                <i className={`bi ${icon} me-2`} />
+                <span>{label}</span>
+            </div>
+
+            {/* Badge hiển thị số chưa đọc */}
+            {unreadCount > 0 && (
+                <span
+                    className="badge rounded-circle bg-danger text-white d-flex align-items-center justify-content-center"
+                    style={{
+                        width: "22px",
+                        height: "22px",
+                        fontSize: "12px",
+                        lineHeight: "1"
+                    }}
+                >
+                    {unreadCount}
+                </span>
+            )}
         </Link>
     </li>
 );

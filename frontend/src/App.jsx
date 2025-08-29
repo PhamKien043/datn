@@ -26,7 +26,8 @@ import PaymentPage from "./Pages/Client/Payment/PaymentPage.jsx";
 import MyOrders from "./Pages/Client/OrderDetail/MyOrders.jsx";
 import OrderDetails from "./Pages/Client/OrderDetail/OrderDetails.jsx";
 import OrderDetailAdmin from "./Pages/Admin/History/EditOrder.jsx";
-
+import Blog from "./Pages/Client/Blog";
+import BlogDetail from "./Pages/Client/Blog/detail.jsx";
 
 // Rooms
 import Rooms from "./Pages/Admin/Rooms";
@@ -46,6 +47,14 @@ import AddCategory from "./Pages/Admin/CategoryServices/AddCategory.jsx";
 import EditCategory from "./Pages/Admin/CategoryServices/EditCategory.jsx";
 import ScheduleManager from "./Pages/Admin/Schedule/ScheduleManager.jsx";
 
+// blog
+import BlogList from "./Pages/Admin/Blog";
+import AddBlog from "./Pages/Admin/Blog/addBlog";
+import EditBlog from "./Pages/Admin/Blog/editBlog";
+
+// email
+import EmailList from "./Pages/Admin/Email";
+import EmailDetail from "./Pages/Admin/Email/Detail.jsx";
 
 import AddMenu from "./Pages/Admin/Menus/addMenu.jsx";
 import MenusList from "./Pages/Admin/Menus/index.jsx";
@@ -57,7 +66,9 @@ import AddCategoryMenu from "./Pages/Admin/Category_Menu/addCategoryMenu.jsx";
 import CategoryMenuList from "./Pages/Admin/Category_Menu/index.jsx";
 import DetailCategoryMenu from "./Pages/Admin/Category_Menu/DetaiCategoryMenu.jsx";
 import { clearAuth, getUserFromStorage } from "./services/authService.js";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 function CategoryAdmin() {
     return null;
@@ -99,7 +110,7 @@ function PrivateRoute({ children }) {
 function App() {
     return (
         <Router>
-
+            <ToastContainer position="top-right" autoClose={3000} newestOnTop />
             <Routes>
                 <Route
                     path="/admin"
@@ -159,6 +170,15 @@ function App() {
                     <Route path="menus/edit/:id" element={<EditMenu />} />
                     <Route path="menus/detail/:id" element={<DetailMenu />} />
 
+                    {/* Blog */}
+                    <Route path="blogs" element={<BlogList />} />
+                    <Route path="blog/add" element={<AddBlog />} />
+                    <Route path="blog/edit/:id" element={<EditBlog />} />
+
+                    {/* Email */}
+                    <Route path="emails" element={<EmailList />} />
+                    <Route path="email/:id" element={<EmailDetail />} />
+
                 </Route>
 
                 {/* Client Routes */}
@@ -176,6 +196,9 @@ function App() {
                     <Route path="Checkout" element={<Checkout />} />
                     <Route path="my-orders" element={<MyOrders />} />
                     <Route path="orders/:orderId" element={<OrderDetails />} />
+
+                    <Route path="blogs" element={<Blog />} />
+                    <Route path="blog/:id" element={<BlogDetail />} />
 
                     {/* Auth Routes */}
                     <Route path="/Login" element={<Login />} />

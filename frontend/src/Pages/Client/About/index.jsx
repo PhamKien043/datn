@@ -12,9 +12,9 @@ export default function About() {
                 <div className="container">
                     <div className="row align-items-center gy-4">
                         <div className="col-lg-7">
-              <span className="badge rounded-pill px-3 py-2 about-badge">
-                Giới thiệu về chúng tôi
-              </span>
+                            <span className="badge rounded-pill px-3 py-2 about-badge">
+                                Giới thiệu về chúng tôi
+                            </span>
                             <h1 className="display-4 fw-bold mt-3 mb-3 text-dark">
                                 Tổ chức sự kiện <span className="text-gradient">đẳng cấp</span>,{" "}
                                 trải nghiệm <span className="text-gradient">đáng nhớ</span>

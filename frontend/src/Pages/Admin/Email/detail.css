@@ -1,0 +1,86 @@
+/* Container tổng */
+.email-detail-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+/* Header */
+.email-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.email-detail-header h2 {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Card hiển thị email */
+.email-detail-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e6e6e6;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.email-detail-card:hover {
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Mỗi dòng thông tin */
+.detail-item {
+  margin-bottom: 18px;
+  font-size: 1rem;
+}
+
+.detail-item strong {
+  display: inline-block;
+  min-width: 130px;
+  color: #555;
+  font-weight: 600;
+}
+
+/* Nội dung tin nhắn */
+.message-box {
+  background: #f8f9fb;
+  padding: 15px;
+  border-left: 4px solid #4a90e2;
+  border-radius: 8px;
+  margin-top: 6px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #444;
+  white-space: pre-wrap;
+}
+
+/* Nút quay lại */
+.btn-back {
+  padding: 8px 16px;
+  border: none;
+  background: #4a90e2;
+  color: #fff;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.btn-back:hover {
+  background: #357ab8;
+  transform: translateY(-1px);
+}
+
+.btn-back:active {
+  transform: translateY(1px);
+}

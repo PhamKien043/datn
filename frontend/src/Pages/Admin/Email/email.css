@@ -1,0 +1,203 @@
+/* Container & Header */
+.container {
+  font-family: Arial, sans-serif;
+}
+
+.card-body h4 {
+  margin: 0;
+}
+
+.card-body .btn-success {
+  white-space: nowrap;
+}
+
+/* Filter inputs */
+.row.g-2 input,
+.row.g-2 select {
+  min-height: 38px;
+}
+
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow-x: auto;
+}
+
+th, td {
+  text-align: center;
+  vertical-align: middle;
+  padding: 8px;
+}
+
+th {
+  background-color: #e9ecef;
+}
+
+.text-truncate {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Badge */
+.badge {
+  font-size: 0.9em;
+  padding: 0.5em 1em;
+}
+
+/* Action buttons */
+.action-buttons {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-action {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  font-size: 0.9em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-action .icon {
+  font-size: 1em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Colors */
+.btn-view { background-color: #17a2b8; color: white; }
+.btn-view:hover { background-color: #117a8b; }
+
+.btn-edit { background-color: #ffc107; color: black; }
+.btn-edit:hover { background-color: #d39e00; }
+
+.btn-delete { background-color: #dc3545; color: white; }
+.btn-delete:hover { background-color: #a71d2a; }
+
+/* Spinner & Alerts */
+.my-5 {
+  margin-top: 3rem !important;
+  margin-bottom: 3rem !important;
+}
+
+/* Pagination */
+.pagination {
+  justify-content: center;
+}
+
+td.status-active {
+  color: green !important;
+  font-weight: 600;
+}
+
+td.status-inactive {
+  color: red !important;
+  font-weight: 600;
+}
+
+.status-cell {
+  font-weight: 500;
+  text-align: center;
+}
+
+.status-active {
+  color: green !important;
+}
+
+.status-inactive {
+  color: red !important;
+}
+
+/* Ô cột hành động tối nhẹ khi hover/click */
+.td-action {
+  transition: background-color 0.2s ease;
+}
+.td-action:hover {
+  background-color: rgba(0, 0, 0, 0.04);  /* hơi đen khi rê chuột */
+}
+.td-action:active,
+.td-action.active {
+  background-color: rgba(0, 0, 0, 0.08);  /* đậm hơn khi bấm */
+}
+
+/* Nút xem chi tiết */
+.btn-view {
+  background-color: #f1f3f5;
+  color: #212529;
+  border: 1px solid #343a40;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-view:hover {
+  background-color: #343a40;
+  color: #fff;
+  border-color: #343a40;
+}
+.btn-view:active {
+  transform: translateY(1px);
+}
+
+.new-badge {
+  background: red;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 8px;
+  margin-left: 5px;
+}
+
+
+/* Responsive */
+
+/* Tablet */
+@media screen and (max-width: 1024px) {
+  .text-truncate {
+    max-width: 150px;
+  }
+}
+
+/* Mobile */
+@media screen and (max-width: 480px) {
+  /* Ẩn text các cột Mô tả và Trạng thái */
+  table th:nth-child(3),
+  table td:nth-child(3),
+  table th:nth-child(4),
+  table td:nth-child(4) {
+    display: none;
+  }
+
+  /* Action buttons: chỉ hiển thị icon */
+  .btn-action {
+    padding: 4px;
+    font-size: 0.75em;
+  }
+
+  .btn-action .icon {
+    font-size: 1.2em;
+    margin: 0;
+  }
+
+  .btn-action span:not(.icon) {
+    display: none;
+  }
+
+  /* Table font nhỏ */
+  th, td {
+    font-size: 12px;
+    padding: 4px 5px;
+  }
+}

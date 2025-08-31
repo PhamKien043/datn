@@ -21,7 +21,7 @@ app.post('/Contact', (req, res) => {
     const userInfo = req.body;
 
     const mailOptions = {
-        from: 'Caster Serv',
+        from: '"Caster Serv" <happy000event@gmail.com>',
         to: userInfo.email,
         subject: 'Chào mừng đến với Caster Serv',
         html: `

@@ -80,6 +80,25 @@ function Contact() {
     } catch (error) {
       toast.error(error.message || "Gửi email thất bại!");
     }
+
+    fetch('http://localhost:4500/Contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          toast.success('Gửi email thành công!');
+          setFormData({ name: '', email: '', message: '' });
+        } else {
+          toast.error('Gửi email thất bại!');
+        }
+      })
+      .catch(() => {
+        toast.error('Không thể kết nối tới máy chủ!');
+      });
   };
 
   return (
@@ -104,9 +123,8 @@ function Contact() {
                   {/* Name */}
                   <input
                     type="text"
-                    className={`form-control mb-1 p-3 border-primary rounded ${
-                      errors.name ? "is-invalid" : ""
-                    }`}
+                    className={`form-control mb-1 p-3 border-primary rounded ${errors.name ? "is-invalid" : ""
+                      }`}
                     placeholder="Tên Của Bạn"
                     name="name"
                     value={formData.name}
@@ -120,9 +138,8 @@ function Contact() {
                   {/* Email */}
                   <input
                     type="email"
-                    className={`form-control mb-1 p-3 border-primary rounded ${
-                      errors.email ? "is-invalid" : ""
-                    }`}
+                    className={`form-control mb-1 p-3 border-primary rounded ${errors.email ? "is-invalid" : ""
+                      }`}
                     placeholder="Nhập Email Của Bạn"
                     name="email"
                     value={formData.email}
@@ -136,9 +153,8 @@ function Contact() {
                   {/* Phone */}
                   <input
                     type="text"
-                    className={`form-control mb-1 p-3 border-primary rounded ${
-                      errors.phone ? "is-invalid" : ""
-                    }`}
+                    className={`form-control mb-1 p-3 border-primary rounded ${errors.phone ? "is-invalid" : ""
+                      }`}
                     placeholder="Số Điện Thoại Của Bạn"
                     name="phone"
                     value={formData.phone}
@@ -151,9 +167,8 @@ function Contact() {
 
                   {/* Message */}
                   <textarea
-                    className={`form-control mb-1 p-3 border-primary rounded ${
-                      errors.message ? "is-invalid" : ""
-                    }`}
+                    className={`form-control mb-1 p-3 border-primary rounded ${errors.message ? "is-invalid" : ""
+                      }`}
                     rows={5}
                     placeholder="Tin Nhắn Của Bạn"
                     name="message"

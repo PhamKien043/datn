@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Đặt lại mật khẩu</title>
     <meta charset="utf-8">
@@ -12,18 +13,21 @@
             margin: 0 auto;
             padding: 20px;
         }
+
         .container {
             background-color: #f9f9f9;
             border-radius: 5px;
             padding: 20px;
             border: 1px solid #ddd;
         }
+
         .header {
             text-align: center;
             padding-bottom: 20px;
             border-bottom: 1px solid #ddd;
             margin-bottom: 20px;
         }
+
         .button {
             display: inline-block;
             background-color: #007bff;
@@ -33,6 +37,7 @@
             border-radius: 5px;
             margin: 20px 0;
         }
+
         .footer {
             margin-top: 30px;
             font-size: 12px;
@@ -41,6 +46,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -49,14 +55,22 @@
 
         <p>Xin chào,</p>
 
-        <p>Chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn. Vui lòng nhấp vào nút bên dưới để đặt lại mật khẩu:</p>
+        <p>Chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn. Vui lòng nhấp vào nút bên dưới để đặt lại
+            mật khẩu:</p>
 
-        <div style="text-align: center;">
-            <a href="{{ url('reset-password?token=' . $token) }}" class="button">Đặt lại mật khẩu</a>
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="{{ env('FRONTEND_URL') . '/reset-password?token=' . $token }}" style="display:inline-block;
+              padding:10px 20px;
+              background-color:#4CAF50;
+              color:#fff;
+              text-decoration:none;
+              border-radius:5px;
+              font-weight:bold;">
+                Đặt lại mật khẩu
+            </a>
         </div>
 
-        <p>Hoặc bạn có thể sử dụng liên kết này:</p>
-        <p>{{ env('FRONTEND_URL') . '/reset-password?token=' . $token }}</p>
+
 
         <p>Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p>
 
@@ -69,4 +83,5 @@
         </div>
     </div>
 </body>
+
 </html>

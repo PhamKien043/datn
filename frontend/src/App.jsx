@@ -29,6 +29,8 @@ import OrderDetailAdmin from "./Pages/Admin/History/EditOrder.jsx";
 import Blog from "./Pages/Client/Blog";
 import BlogDetail from "./Pages/Client/Blog/detail.jsx";
 
+import ForgotPassword from "./Pages/Client/ForgotPassword";
+import ResetPassword from "./Pages/Client/ResetPassword";
 // Rooms
 import Rooms from "./Pages/Admin/Rooms";
 import AddRooms from "./Pages/Admin/Rooms/addRooms";
@@ -203,9 +205,9 @@ function App() {
                     {/* Auth Routes */}
                     <Route path="/Login" element={<Login />} />
                     <Route path="/Register" element={<Register />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
                 </Route>
-
-
             </Routes>
         </Router>
     );

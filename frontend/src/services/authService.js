@@ -76,34 +76,57 @@ export const isAdmin = (u = getUser()) => u?.role === 0;
 
 /* ===== API ===== */
 export const login = (email, password) =>
-    api.post('auth/login', { email, password }).then(r => r.data);
+  api.post('auth/login', { email, password }).then(r => r.data);
 
 export const register = (payload) =>
-    api.post('auth/register', payload).then(r => r.data);
+  api.post('auth/register', payload).then(r => r.data);
 
 export const serverLogout = () =>
-    api.post('auth/logout')
-        .then(r => { clearAuth(); return r.data; })
-        .catch(() => clearAuth());
+  api.post('auth/logout')
+    .then(r => { clearAuth(); return r.data; })
+    .catch(() => clearAuth());
 
 export const fetchMe = () =>
-    api.get('auth/user').then(r => r.data);
+  api.get('auth/user').then(r => r.data);
 
 /* ===== Google Login ===== */
-// Đăng nhập với Google token
 export const loginWithGoogleToken = async (idToken) => {
   try {
-    // Sử dụng instance api đã import từ './axios'
     const response = await api.post("auth/google/token", {
-      id_token: idToken, // backend chấp nhận id_token
+      id_token: idToken,
     });
     return response.data;
   } catch (error) {
     throw error;
   }
 };
+
 /* ===== Aliases (giữ tương thích code cũ) ===== */
 export const getUserFromStorage = getUser;
 export const removeUserFromStorage = clearAuth;
 export const getTokenFromStorage = getToken;
 export const logout = serverLogout;
+
+/* ===== Forgot / Reset Password ===== */
+export const forgotPassword = async (email) => {
+  try {
+    const response = await api.post("auth/forgot-password", { email });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const resetPassword = async (email, token, password, password_confirmation) => {
+  try {
+    const response = await api.post("auth/reset-password", {
+      email,
+      token,
+      password,
+      password_confirmation
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

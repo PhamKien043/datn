@@ -68,7 +68,7 @@ class CommentController extends Controller
 
         // Kiểm tra user có đơn hợp lệ 
         $hasAllowedOrder = Order::where('user_id', $request->user_id)
-            ->whereIn('status', ['confirmed', 'preparing', 'ready', 'completed'])
+            ->whereIn('status', ['completed'])
             ->whereHas('details', function ($q) use ($request) {
                 $q->where('service_id', $request->service_id);
             })

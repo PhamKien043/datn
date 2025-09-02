@@ -177,7 +177,7 @@ const Dashboard = () => {
         const statusMap = {
             pending: { label: "Chờ xử lý", color: "orange" },
             confirmed: { label: "Đã xác nhận", color: "blue" },
-            delivered: { label: "Hoàn thành", color: "green" },
+            completed: { label: "Hoàn thành", color: "green" },
             cancelled: { label: "Đã hủy", color: "red" },
         };
 
@@ -232,7 +232,7 @@ const Dashboard = () => {
                             title="Tỷ lệ hoàn thành (%)"
                             value={
                                 overview.total_orders > 0
-                                    ? ((overview.orders_by_status?.delivered || 0) / overview.total_orders * 100).toFixed(2) + "%"
+                                    ? ((overview.orders_by_status?.completed || 0) / overview.total_orders * 100).toFixed(2) + "%"
                                     : "0%"
                             }
                         />
@@ -295,7 +295,8 @@ const Dashboard = () => {
                                             {getActivityIcon(activity.title)}
                                         </div>
                                         <div>
-                                            <h6 className="mb-0">{activity.title}</h6>
+                                            
+                        <div className="fw-medium text-dark">{activity.title}</div>
                                             <small className="text-muted">{activity.time}</small>
                                         </div>
                                     </div>

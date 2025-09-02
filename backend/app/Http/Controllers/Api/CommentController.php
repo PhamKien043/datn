@@ -3,159 +3,118 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CommentRequest;
 use App\Models\Comment;
-use App\Models\Event;
+use App\Models\Order;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 
 class CommentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Lấy danh sách bình luận 
     public function index(Request $request)
     {
         $serviceId = $request->query('service_id');
 
-        $query = Comment::with('user')->orderBy('created_at', 'desc');
+        $query = Comment::with(['user', 'service'])
+            ->orderBy('created_at', 'desc');
 
         if ($serviceId) {
-            $query->where('service_id', $serviceId)->where('status', 1);
+            $query->where('service_id', $serviceId);
         }
-
-        $comments = $query->get();
 
         return response()->json([
             'success' => true,
             'message' => 'Danh sách bình luận',
-            'data' => $comments
+            'data'    => $query->get(), 
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+
+    // Cập nhật trạng thái bình luận (0/1)
+    public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'event_id' => 'required|exists:events,id',
-            'content' => 'required',
-            'user_id' => 'required',
+            'status' => 'required|in:0,1',
         ]);
-        $data_comment = $request->all();
-        try {
-            $comment = Comment::create($data_comment);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Bình luận thành công',
-                'data' => $comment
-            ], 200);
-        } catch (QueryException $e) {
-            if ($e->errorInfo[1] == 1452) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Không thể bình luận',
-                ], 400);
-            }
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Bình luận thất bại do lỗi hệ thống',
-            ], 500);
-        }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Request $request)
-    {
-        $user_id = $request->user_id;
-        $event_id = $request->event_id;
-
-        $comment = Comment::where('user_id', $user_id)
-            ->where('event_id', $event_id)
-            ->first();
-
+        $comment = Comment::find($id);
         if (!$comment) {
             return response()->json([
                 'success' => false,
-                'message' => 'Không tìm thấy bình luận',
+                'message' => 'Bình luận không tồn tại',
             ], 404);
         }
+
+        $comment->status = (int) $request->status;
+        $comment->save();
 
         return response()->json([
             'success' => true,
-            'message' => 'Chi tiết bình luận',
-            'data' => $comment
-        ], 200);
+            'message' => 'Cập nhật trạng thái thành công',
+            'data' => $comment,
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $event_id)
-    {
-        $event = Event::find($event_id);
-        if (!$event) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sự kiện không tìm thấy'
-            ], 404);
-        }
-        $data_update = $request->all();
 
-        try {
-            $comment = Comment::where('user_id', Auth::id())
-                ->where('event_id', $event_id)
-                ->update($data_update);
-            return response()->json([
-                'success' => true,
-                'message' => 'Cập nhật bình luận thành công',
-                'data' => $comment
-            ], 201);
-        } catch (QueryException $e) {
+    // Gửi bình luận mới 
+    public function store(Request $request)
+    {
+        $request->validate([
+            'content' => 'required|string',
+            'user_id' => 'required|exists:users,id',
+            'service_id' => 'required|exists:services,id',
+            'rating' => 'required|integer|min:1|max:5',
+        ]);
+
+        // Kiểm tra user có đơn hợp lệ 
+        $hasAllowedOrder = Order::where('user_id', $request->user_id)
+            ->whereIn('status', ['confirmed', 'preparing', 'ready', 'completed'])
+            ->whereHas('details', function ($q) use ($request) {
+                $q->where('service_id', $request->service_id);
+            })
+            ->exists();
+
+        if (!$hasAllowedOrder) {
             return response()->json([
                 'success' => false,
-                'message' => 'Cập nhật bình luận thất bại do lỗi hệ thống'
-            ], 500);
+                'message' => 'Khách hàng cần đặt và thanh toán dịch vụ trước khi bình luận.',
+            ], 403);
         }
+
+        $comment = Comment::create([
+            'content'    => $request->content,
+            'user_id'    => $request->user_id,
+            'service_id' => $request->service_id,
+            'rating'     => (int) $request->rating,
+            'status'     => 1, // 1 = duyệt luôn (tuỳ chính sách)
+        ]);
+
+        $comment->load('user');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Gửi bình luận thành công',
+            'data' => $comment,
+        ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Request $request)
+
+    // Xoá bình luận
+    public function destroy($id)
     {
-        $user_id = $request->user_id;
-        $event_id = $request->event_id;
-
-        $comment = Comment::where('user_id', $user_id)
-            ->where('event_id', $event_id)
-            ->first();
-
+        $comment = Comment::find($id);
         if (!$comment) {
             return response()->json([
                 'success' => false,
-                'message' => 'Không tìm thấy bình luận',
+                'message' => 'Bình luận không tồn tại',
             ], 404);
         }
 
-        try {
-            $comment->delete();
-            return response()->json([
-                'success' => true,
-                'message' => 'Xoá bình luận thành công',
-            ], 200);
-        } catch (QueryException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Xoá bình luận thất bại do lỗi hệ thống',
-            ], 500);
-        }
+        $comment->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Xóa bình luận thành công',
+        ]);
     }
-}
+}   

@@ -3,6 +3,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./menu-modern.css";
+import { getUserFromStorage } from "../../../services/authService.js";
 
 const VND = (n = 0) =>
     new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(Number(n) || 0);
@@ -18,6 +19,9 @@ const Menu = () => {
   const [activeCategory, setActiveCategory] = useState(null);
   const [menusByCategory, setMenusByCategory] = useState({});
   const [selectedRoom, setSelectedRoom] = useState(null);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
 
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [isLoadingMenus, setIsLoadingMenus] = useState(false);
@@ -26,7 +30,11 @@ const Menu = () => {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("popular"); // 'popular' | 'price_asc' | 'price_desc' | 'name_asc'
 
-  const userId = 1;
+  const currentUser = getUserFromStorage();
+  const userId = currentUser ? currentUser.id : null;
+
+  // ---- Cart items state ----
+  const [cartItems, setCartItems] = useState([]);
 
   // ---- Search API (server-side) ----
   const searchMenus = useCallback(async (keyword) => {
@@ -93,15 +101,42 @@ const Menu = () => {
 
   // ---- Fetch: Selected room from cart ----
   const fetchSelectedRoom = useCallback(async () => {
-    try {
-      const res = await axios.get("http://localhost:8000/api/cart-details");
-      const userCart = (Array.isArray(res.data) ? res.data : []).filter((item) => item.user_id === userId);
-      const room = userCart.find((item) => item.room !== null)?.room;
+    if (!userId) return;
 
-      if (room) {
-        setSelectedRoom(room);
+    try {
+      const res = await axios.get("http://localhost:8000/api/cart-details", {
+        params: { user_id: userId },
+      });
+      const userCart = (Array.isArray(res.data) ? res.data : []).filter((item) => item.user_id === userId);
+
+      console.log("Full User Cart Data:", userCart);
+
+      userCart.forEach((item, index) => {
+        console.log(`Item ${index}:`, {
+          room_id: item.room_id,
+          roomSlot_id: item.room_slot_id,
+          selected_date: item.selected_date,
+          selected_time_slot: item.selected_time_slot,
+          roomSlot: item.roomSlot ? { id: item.roomSlot.id, is_available: item.roomSlot.is_available } : "Missing",
+        });
+      });
+
+      const validItems = userCart.filter((item) => item.room && item.room_id && item.room_slot_id && item.selected_date && item.selected_time_slot);
+      const validItem = validItems.length > 0 ? validItems.reduce((latest, current) => latest.id > current.id ? latest : current) : null;
+
+      console.log("Valid Item:", validItem);
+
+      if (validItem) {
+        setSelectedRoom(validItem.room);
+        setSelectedSlot({ id: validItem.room_slot_id, slot_date: validItem.selected_date, time_slot: validItem.selected_time_slot });
+        setSelectedDate(validItem.selected_date);
+        setSelectedTimeSlot(validItem.selected_time_slot);
       } else {
-        toast.info("Vui lòng sang trang Dịch vụ để chọn phòng trước khi thêm món vào giỏ hàng.");
+        setSelectedRoom(null);
+        setSelectedSlot(null);
+        setSelectedDate(null);
+        setSelectedTimeSlot(null);
+        toast.info(userCart.length > 0 ? "Lịch đã không còn khả dụng. Vui lòng chọn lại." : "Vui lòng sang trang Dịch vụ để chọn phòng trước khi thêm món vào giỏ hàng.");
       }
     } catch (error) {
       console.error("Lỗi khi kiểm tra phòng:", error);
@@ -109,11 +144,28 @@ const Menu = () => {
     }
   }, [userId]);
 
+  // ---- Fetch: Cart items to check duplicates ----
+  const fetchCartItems = useCallback(async () => {
+    if (!userId) return;
+    try {
+      const res = await axios.get("http://localhost:8000/api/cart-details", {
+        params: { user_id: userId },
+      });
+      const userCart = (Array.isArray(res.data) ? res.data : []).filter((item) => item.user_id === userId);
+      const menuIdsInCart = userCart.map((item) => item.menu_id);
+      setCartItems(menuIdsInCart);
+    } catch (error) {
+      console.error("Lỗi khi tải giỏ hàng:", error);
+      toast.error(`Lỗi khi tải giỏ hàng: ${error.response?.data?.message || error.message}`);
+    }
+  }, [userId]);
+
   // ---- Mount ----
   useEffect(() => {
     fetchCategories();
     fetchSelectedRoom();
-  }, [fetchCategories, fetchSelectedRoom]);
+    fetchCartItems();
+  }, [fetchCategories, fetchSelectedRoom, fetchCartItems]);
 
   // ---- Cleanup debounce timer ----
   useEffect(() => {
@@ -134,29 +186,36 @@ const Menu = () => {
   };
 
   const handleAddToCart = async (menu) => {
-    if (!selectedRoom) {
+    if (!userId) {
+      toast.warn("Vui lòng đăng nhập để thêm món vào giỏ hàng.");
+      return;
+    }
+
+    if (!selectedRoom || !selectedSlot || !selectedDate || !selectedTimeSlot) {
       const toastId = toast.warning(
-          <div>
-            <h6>Chưa chọn phòng!</h6>
-            <p>Vui lòng chuyển sang trang Dịch vụ để chọn phòng trước khi thêm món.</p>
-            <button
-                className="btn btn-sm btn-brand mt-2"
-                onClick={() => {
-                  toast.dismiss(toastId);
-                  window.location.href = "/Service";
-                }}
-            >
-              Đi đến trang dịch vụ
-            </button>
-          </div>,
-          { autoClose: false, closeOnClick: false, draggable: false }
+        <div>
+          <h6>Chưa chọn phòng hoặc lịch!</h6>
+          <p>Vui lòng chuyển sang trang Dịch vụ để chọn phòng và lịch trước khi thêm món.</p>
+          <button
+            className="btn btn-sm btn-brand mt-2"
+            onClick={() => {
+              toast.dismiss(toastId);
+              window.location.href = "/Service";
+            }}
+          >
+            Đi đến trang dịch vụ
+          </button>
+        </div>,
+        { autoClose: false, closeOnClick: false, draggable: false }
       );
       return;
     }
 
     try {
       setAddingId(menu.id);
-      const res = await axios.get("http://localhost:8000/api/cart-details");
+      const res = await axios.get("http://localhost:8000/api/cart-details", {
+        params: { user_id: userId },
+      });
       const userCart = (Array.isArray(res.data) ? res.data : []).filter((item) => item.user_id === userId);
       const isDuplicate = userCart.some((item) => item.menu_id === menu.id);
 
@@ -167,33 +226,39 @@ const Menu = () => {
 
       const payload = {
         user_id: userId,
+        service_id: 1, // Giả định service_id cố định, cần lấy động nếu có nhiều dịch vụ
         room_id: selectedRoom.id,
+        room_slot_id: selectedSlot.id,
+        location_type_id: selectedRoom.location_type_id,
+        selected_date: selectedDate,
+        selected_time_slot: selectedTimeSlot,
         menus: [{ menu_id: menu.id, quantity: 1, price_per_table: menu.price }],
       };
 
       await axios.post("http://localhost:8000/api/cart-details", payload);
 
       const toastId = toast.success(
-          <div>
-            <h6>Đã thêm vào giỏ!</h6>
-            <p>Đã thêm món “{menu.name}”.</p>
-            <div className="d-flex gap-2 mt-2">
-              <button
-                  className="btn btn-sm btn-brand"
-                  onClick={() => {
-                    toast.dismiss(toastId);
-                    window.location.href = "/cart-details";
-                  }}
-              >
-                Xem giỏ hàng
-              </button>
-              <button className="btn btn-sm btn-outline-secondary" onClick={() => toast.dismiss(toastId)}>
-                Tiếp tục đặt
-              </button>
-            </div>
-          </div>,
-          { autoClose: 5000 }
+        <div>
+          <h6>Đã thêm vào giỏ!</h6>
+          <p>Đã thêm món “{menu.name}”.</p>
+          <div className="d-flex gap-2 mt-2">
+            <button
+              className="btn btn-sm btn-brand"
+              onClick={() => {
+                toast.dismiss(toastId);
+                window.location.href = "/cart-details";
+              }}
+            >
+              Xem giỏ hàng
+            </button>
+            <button className="btn btn-sm btn-outline-secondary" onClick={() => toast.dismiss(toastId)}>
+              Tiếp tục đặt
+            </button>
+          </div>
+        </div>,
+        { autoClose: 5000 }
       );
+      fetchCartItems(); 
     } catch (error) {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
       toast.error(error.response?.data?.message || "Thêm vào giỏ hàng thất bại.");
@@ -242,6 +307,12 @@ const Menu = () => {
             </div>
           </div>
       ));
+
+  // ---- Get category name by ID ----
+  const getCategoryName = (categoryId) => {
+    const category = categories.find(cat => cat.id === categoryId);
+    return category ? category.name : "Danh mục";
+  };
 
   return (
       <>
@@ -360,18 +431,23 @@ const Menu = () => {
                               <div className="d-flex justify-content-between align-items-center">
                                 <div className="menu-card__meta text-muted">
                                   <i className="fa fa-folder-open me-1" aria-hidden="true" />
-                                  <span>{item?.category?.name || "Danh mục"}</span>
+                                  <span>{getCategoryName(item.category_id) || "Danh mục"}</span>
                                 </div>
                                 <button
                                     className="btn btn-brand btn-sm"
                                     onClick={() => handleAddToCart(item)}
                                     aria-label={`Thêm ${item.name} vào giỏ`}
-                                    disabled={addingId === item.id}
+                                    disabled={addingId === item.id || cartItems.includes(item.id)}
                                 >
                                   {addingId === item.id ? (
                                       <>
                                         <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
                                         Đang thêm…
+                                      </>
+                                  ) : cartItems.includes(item.id) ? (
+                                      <>
+                                        <i className="fa fa-check me-2" aria-hidden="true" />
+                                        Đã có trong giỏ hàng
                                       </>
                                   ) : (
                                       <>
@@ -419,18 +495,23 @@ const Menu = () => {
                           <div className="d-flex justify-content-between align-items-center">
                             <div className="menu-card__meta text-muted">
                               <i className="fa fa-cutlery me-1" aria-hidden="true" />
-                              <span>Món chính</span>
+                              <span>{getCategoryName(item.category_id) || "Danh mục"}</span>
                             </div>
                             <button
                                 className="btn btn-brand btn-sm"
                                 onClick={() => handleAddToCart(item)}
                                 aria-label={`Thêm ${item.name} vào giỏ`}
-                                disabled={addingId === item.id}
+                                disabled={addingId === item.id || cartItems.includes(item.id)}
                             >
                               {addingId === item.id ? (
                                   <>
                                     <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
                                     Đang thêm…
+                                  </>
+                              ) : cartItems.includes(item.id) ? (
+                                  <>
+                                    <i className="fa fa-check me-2" aria-hidden="true" />
+                                    Đã có trong giỏ hàng
                                   </>
                               ) : (
                                   <>

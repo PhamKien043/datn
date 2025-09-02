@@ -20,7 +20,7 @@ class StatisticController extends Controller
     public function overview()
     {
         $totalOrders = Order::count();
-        $totalRevenue = Order::whereIn('status', ['confirmed', 'delivered'])->sum('total_amount');
+        $totalRevenue = Order::whereIn('status', ['confirmed', 'completed'])->sum('total_amount');
         $ordersByStatus = Order::select('status', DB::raw('count(*) as total'))
             ->groupBy('status')
             ->pluck('total', 'status');
@@ -36,7 +36,7 @@ class StatisticController extends Controller
     public function totalRevenue()
     {
         $revenue = OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')
-            ->whereIn('orders.status', ['confirmed', 'delivered'])
+            ->whereIn('orders.status', ['confirmed', 'completed'])
             ->sum(DB::raw('COALESCE(order_details.quantity, 0) * COALESCE(order_details.price, 0)'));
 
         $total = $revenue;
@@ -53,7 +53,7 @@ class StatisticController extends Controller
     // 4. Doanh thu theo ngày
     public function revenueByDate()
     {
-        $revenue = Order::whereIn('status', ['confirmed', 'delivered'])
+        $revenue = Order::whereIn('status', ['confirmed', 'completed'])
             ->select(DB::raw('DATE(date) as date'), DB::raw('SUM(total_amount) as total'))
             ->groupBy(DB::raw('DATE(date)'))
             ->orderBy('date', 'desc')
@@ -67,7 +67,7 @@ class StatisticController extends Controller
     {
         $year = now()->year;
 
-        $monthly = Order::whereIn('status', ['confirmed', 'delivered'])
+        $monthly = Order::whereIn('status', ['confirmed', 'completed'])
             ->whereYear('date', $year)
             ->select(DB::raw('MONTH(date) as month'), DB::raw('SUM(total_amount) as total'))
             ->groupBy(DB::raw('MONTH(date)'))
@@ -83,7 +83,7 @@ class StatisticController extends Controller
     {
         $top = OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')
             ->join('services', 'order_details.service_id', '=', 'services.id')
-            ->whereIn('orders.status', ['confirmed', 'delivered'])
+            ->whereIn('orders.status', ['confirmed', 'completed'])
             ->select('services.name', DB::raw('COUNT(order_details.id) as total'))
             ->groupBy('services.name')
             ->orderByDesc('total')
@@ -98,7 +98,7 @@ class StatisticController extends Controller
     {
         $top = OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')
             ->join('rooms', 'order_details.room_id', '=', 'rooms.id')
-            ->whereIn('orders.status', ['confirmed', 'delivered'])
+            ->whereIn('orders.status', ['confirmed', 'completed'])
             ->select('rooms.name', DB::raw('COUNT(order_details.id) as total'))
             ->groupBy('rooms.name')
             ->orderByDesc('total')
@@ -113,7 +113,7 @@ class StatisticController extends Controller
     {
         $top = OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')
             ->join('menus', 'order_details.menu_id', '=', 'menus.id')
-            ->whereIn('orders.status', ['confirmed', 'delivered'])
+            ->whereIn('orders.status', ['confirmed', 'completed'])
             ->select(
                 'menus.name',
                 DB::raw('COUNT(DISTINCT order_details.id) as order_count'),
@@ -137,7 +137,7 @@ class StatisticController extends Controller
         $rooms = Room::all();
 
         $orderIds = Order::whereDate('date', $date)
-            ->whereIn('status', ['confirmed', 'delivered'])
+            ->whereIn('status', ['confirmed', 'completed'])
             ->pluck('id');
 
         // Lấy chi tiết order của các đơn hàng đó, cùng với room_slot info
@@ -197,7 +197,7 @@ class StatisticController extends Controller
     public function recentOrders()
     {
         $orders = Order::with(['user', 'details.service', 'details.menu', 'details.room'])
-            ->whereIn('status', ['confirmed', 'delivered'])
+            ->whereIn('status', ['confirmed', 'completed'])
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
@@ -242,7 +242,7 @@ class StatisticController extends Controller
             $activities->push([
                 'type' => 'order',
                 'title' => "Đơn hàng mới #ORD-{$order->id}" . ($extra ? " - {$extra}" : ''),
-                'time' => $order->created_at->diffForHumans(),
+                'time' => $order->created_at->locale('vi')->diffForHumans(),
                 'timestamp' => $order->created_at->timestamp,
             ]);
         }
@@ -253,7 +253,7 @@ class StatisticController extends Controller
             $activities->push([
                 'type' => 'user',
                 'title' => "Khách hàng mới: " . $user->name,
-                'time' => $user->created_at->diffForHumans(),
+                'time' => $user->created_at->locale('vi')->diffForHumans(),
                 'timestamp' => $user->created_at->timestamp,
             ]);
         }

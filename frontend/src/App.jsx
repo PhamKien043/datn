@@ -52,6 +52,7 @@ import BlogList from "./Pages/Admin/Blog";
 import AddBlog from "./Pages/Admin/Blog/addBlog";
 import EditBlog from "./Pages/Admin/Blog/editBlog";
 
+
 // email
 import EmailList from "./Pages/Admin/Email";
 import EmailDetail from "./Pages/Admin/Email/Detail.jsx";

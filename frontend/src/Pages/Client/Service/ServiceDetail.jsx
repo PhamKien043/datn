@@ -7,6 +7,9 @@ import {getUserFromStorage} from "../../../services/authService.js";
 import {ToastContainer, toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+
+
+import ServiceComments from "../Comment/ServiceComments.jsx";
 function ServiceDetail() {
     const {id} = useParams();
     const navigate = useNavigate();
@@ -1114,6 +1117,7 @@ function ServiceDetail() {
             )}
 
 
+            <ServiceComments serviceId={id} currentUser={currentUser} />
             <ToastContainer position="bottom-right"/>
         </div>
     );

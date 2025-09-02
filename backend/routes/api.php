@@ -27,6 +27,7 @@ use App\Http\Controllers\api\StatisticController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VnpayController;
 
+use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\EmailController;
 
 use App\Http\Controllers\Api\VoucherController;
@@ -247,8 +248,10 @@ Route::apiResource('/users', UserController::class);
 Route::get('/users/check-unique', [UserController::class, 'checkUnique']);
 
 
-
-
+Route::get('/comments', [CommentController::class, 'index']);
+Route::put('/comments/{id}/status', [CommentController::class, 'updateStatus']);
+Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
+Route::post('/comments', [CommentController::class, 'store']);
 
 
 Route::prefix('statistics')->controller(StatisticController::class)->group(function () {

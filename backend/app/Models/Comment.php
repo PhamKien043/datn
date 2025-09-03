@@ -10,7 +10,8 @@ class Comment extends Model
         'content',
         'status',
         'user_id',
-        'service_id'
+        'service_id',
+        'rating'
     ];
 
     public function user()

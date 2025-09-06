@@ -18,12 +18,15 @@ function Blog() {
     const fetchBlogs = async () => {
       try {
         const data = await getBlogs();
-        setBlogs(data);
+        // chỉ lấy những bài có status = 1
+        const visibleBlogs = data.filter((blog) => Number(blog.status) === 1);
+        setBlogs(visibleBlogs);
       } catch (err) {
         toast.error("❌ Không thể tải bài viết");
         console.error("API error:", err);
       }
     };
+
 
     fetchBlogs();
   }, []);
@@ -41,40 +44,42 @@ function Blog() {
 
           <div className="row gx-4 justify-content-center">
             {blogs.length > 0 ? (
-              blogs.map((blog, index) => (
-                <div
-                  key={blog.id}
-                  className="col-md-6 col-lg-4 wow bounceInUp"
-                  data-wow-delay={`${0.1 * (index + 1)}s`}
-                >
-                  <div className="blog-item">
-                    <div className="overflow-hidden rounded">
-                      <img
-                        src={`http://localhost:8000/storage/blogs/${blog.image}`}
-                        className="img-fluid w-100"
-                        alt={blog.title}
-                      />
-                    </div>
-                    <div className="blog-content mx-4 d-flex rounded bg-light">
-                      <div className="text-dark bg-primary rounded-start">
-                        <div className="h-100 p-3 d-flex flex-column justify-content-center text-center">
-                          <p className="fw-bold mb-0">
-                            {new Date(blog.created_at).getDate()}
-                          </p>
-                          <p className="fw-bold mb-0">
-                            {new Date(blog.created_at).toLocaleString("default", {
-                              month: "short",
-                            })}
-                          </p>
-                        </div>
+              blogs
+                .filter((blog) => Number(blog.status) === 1)
+                .map((blog, index) => (
+                  <div
+                    key={blog.id}
+                    className="col-md-6 col-lg-4 wow bounceInUp"
+                    data-wow-delay={`${0.1 * (index + 1)}s`}
+                  >
+                    <div className="blog-item">
+                      <div className="overflow-hidden rounded">
+                        <img
+                          src={`http://localhost:8000/storage/blogs/${blog.image}`}
+                          className="img-fluid w-100"
+                          alt={blog.title}
+                        />
                       </div>
-                      <Link to={`/blog/${blog.id}`} className="h5 lh-base my-auto h-100 p-3">
-                        {blog.title}
-                      </Link>
+                      <div className="blog-content mx-4 d-flex rounded bg-light">
+                        <div className="text-dark bg-primary rounded-start">
+                          <div className="h-100 p-3 d-flex flex-column justify-content-center text-center">
+                            <p className="fw-bold mb-0">
+                              {new Date(blog.created_at).getDate()}
+                            </p>
+                            <p className="fw-bold mb-0">
+                              {new Date(blog.created_at).toLocaleString("default", {
+                                month: "short",
+                              })}
+                            </p>
+                          </div>
+                        </div>
+                        <Link to={`/blog/${blog.id}`} className="h5 lh-base my-auto h-100 p-3">
+                          {blog.title}
+                        </Link>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))
+                ))
             ) : (
               <p className="text-center">⏳ Đang tải bài viết...</p>
             )}

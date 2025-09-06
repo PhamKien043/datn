@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllBlogs, deleteBlog } from "../../../services/blogAdmin";
-import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./blog.css";
 
@@ -51,12 +50,16 @@ function BlogList() {
         }
     };
 
-
+    // ✅ Hàm lọc với select và input
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
-        setFilters({ ...filters, [name]: value });
+        setFilters({
+            ...filters,
+            [name]: name === "status" ? (value !== "" ? Number(value) : "") : value
+        });
         setCurrentPage(1);
     };
+
 
     const resetFilters = () => {
         setFilters({ title: "", status: "" });
@@ -88,8 +91,6 @@ function BlogList() {
 
     return (
         <div className="menus-container">
-            {/* ✅ Toast thông báo */}
-            <ToastContainer position="top-right" autoClose={3000} theme="colored" />
 
             <div className="header-section">
                 <h2>📝 Quản lý Bài Viết</h2>
@@ -159,6 +160,7 @@ function BlogList() {
                                     <td className={blog.status ? "status-active" : "status-inactive"}>
                                         {blog.status ? "Hiển thị" : "Ẩn"}
                                     </td>
+
                                     <td>
                                         {blog.created_at
                                             ? new Date(blog.created_at).toLocaleDateString("vi-VN", {
@@ -168,8 +170,15 @@ function BlogList() {
                                             })
                                             : "Không có dữ liệu"}
                                     </td>
+
                                     <td>
                                         <div className="action-buttons">
+                                            <button
+                                                className="btn-view"
+                                                onClick={() => navigate(`/admin/blog/detail/${blog.id}`)}
+                                            >
+                                                👁️ Xem chi tiết
+                                            </button>
                                             <button
                                                 className="btn-edit"
                                                 onClick={() => navigate(`/admin/blog/edit/${blog.id}`)}
@@ -191,18 +200,8 @@ function BlogList() {
 
                     {totalPages > 1 && (
                         <div className="pagination">
-                            <button
-                                disabled={currentPage === 1}
-                                onClick={() => setCurrentPage(1)}
-                            >
-                                ⏮
-                            </button>
-                            <button
-                                disabled={currentPage === 1}
-                                onClick={() => setCurrentPage((prev) => prev - 1)}
-                            >
-                                ◀
-                            </button>
+                            <button disabled={currentPage === 1} onClick={() => setCurrentPage(1)}>««</button>
+                            <button disabled={currentPage === 1} onClick={() => setCurrentPage(prev => prev - 1)}>«</button>
                             {[...Array(totalPages)].map((_, i) => (
                                 <button
                                     key={i + 1}
@@ -212,18 +211,8 @@ function BlogList() {
                                     {i + 1}
                                 </button>
                             ))}
-                            <button
-                                disabled={currentPage === totalPages}
-                                onClick={() => setCurrentPage((prev) => prev + 1)}
-                            >
-                                ▶
-                            </button>
-                            <button
-                                disabled={currentPage === totalPages}
-                                onClick={() => setCurrentPage(totalPages)}
-                            >
-                                ⏭
-                            </button>
+                            <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(prev => prev + 1)}>»</button>
+                            <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(totalPages)}>»»</button>
                         </div>
                     )}
                 </>

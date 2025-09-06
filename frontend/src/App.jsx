@@ -53,6 +53,8 @@ import ScheduleManager from "./Pages/Admin/Schedule/ScheduleManager.jsx";
 import BlogList from "./Pages/Admin/Blog";
 import AddBlog from "./Pages/Admin/Blog/addBlog";
 import EditBlog from "./Pages/Admin/Blog/editBlog";
+import DetailBlog from "./Pages/Admin/Blog/DetailBlog.jsx";
+
 
 // email
 import EmailList from "./Pages/Admin/Email";
@@ -176,6 +178,7 @@ function App() {
                     <Route path="blogs" element={<BlogList />} />
                     <Route path="blog/add" element={<AddBlog />} />
                     <Route path="blog/edit/:id" element={<EditBlog />} />
+                    <Route path="blog/detail/:id" element={<DetailBlog />} />
 
                     {/* Email */}
                     <Route path="emails" element={<EmailList />} />

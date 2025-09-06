@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getAllEmails } from "../../../services/emailAdmin";
 import "./email.css";
@@ -111,7 +110,6 @@ function EmailList() {
 
     return (
         <div className="menus-container">
-            <ToastContainer position="top-right" autoClose={3000} theme="colored" />
 
             <div className="header-section">
                 <h2>📩 Quản lý Liên Hệ / Email</h2>
@@ -178,7 +176,7 @@ function EmailList() {
                                     <td>
                                         {email.name}{" "}
                                         {isNewToday(email.created_at) && (
-                                            <span className="new-badge">NEW</span>
+                                            <span className="new-badge">Mới</span>
                                         )}
                                     </td>
                                     <td>{email.email}</td>
@@ -218,18 +216,8 @@ function EmailList() {
                     {/* ✅ Phân trang */}
                     {totalPages > 1 && (
                         <div className="pagination">
-                            <button
-                                disabled={currentPage === 1}
-                                onClick={() => setCurrentPage(1)}
-                            >
-                                ⏮
-                            </button>
-                            <button
-                                disabled={currentPage === 1}
-                                onClick={() => setCurrentPage((prev) => prev - 1)}
-                            >
-                                ◀
-                            </button>
+                            <button disabled={currentPage === 1} onClick={() => setCurrentPage(1)}>««</button>
+                            <button disabled={currentPage === 1} onClick={() => setCurrentPage(prev => prev - 1)}>«</button>
                             {[...Array(totalPages)].map((_, i) => (
                                 <button
                                     key={i + 1}
@@ -239,18 +227,8 @@ function EmailList() {
                                     {i + 1}
                                 </button>
                             ))}
-                            <button
-                                disabled={currentPage === totalPages}
-                                onClick={() => setCurrentPage((prev) => prev + 1)}
-                            >
-                                ▶
-                            </button>
-                            <button
-                                disabled={currentPage === totalPages}
-                                onClick={() => setCurrentPage(totalPages)}
-                            >
-                                ⏭
-                            </button>
+                            <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(prev => prev + 1)}>»</button>
+                            <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(totalPages)}>»»</button>
                         </div>
                     )}
                 </>

@@ -72,15 +72,6 @@ function Contact() {
 
     if (!validateForm()) return;
 
-    try {
-      await sendContact(formData);
-      toast.success("Gửi email thành công!");
-      setFormData({ name: "", email: "", phone: "", message: "" });
-      setErrors({});
-    } catch (error) {
-      toast.error(error.message || "Gửi email thất bại!");
-    }
-
     fetch('http://localhost:4500/Contact', {
       method: 'POST',
       headers: {
@@ -88,10 +79,11 @@ function Contact() {
       },
       body: JSON.stringify(formData),
     })
-      .then((response) => {
+      .then(async (response) => {
         if (response.status === 200) {
-          toast.success('Gửi email thành công!');
-          setFormData({ name: '', email: '', message: '' });
+          await sendContact(formData);
+          toast.success('Gửi email thành công! Chúng tôi sẽ phản hồi sớm nhất có thể.');
+          setFormData({ name: '', email: '', phone: "", message: '' });
         } else {
           toast.error('Gửi email thất bại!');
         }

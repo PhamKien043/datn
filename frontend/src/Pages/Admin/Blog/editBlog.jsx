@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import {
-    getBlogById,
-    updateBlog,
-    checkBlogTitle,
-} from "../../../services/blogAdmin";
+import { getBlogById, updateBlog, checkBlogTitle }
+    from "../../../services/blogAdmin";
 import "react-toastify/dist/ReactToastify.css";
+import ReactQuill, { Quill } from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import "./edit.css";
 
 function EditBlog() {
@@ -57,7 +55,11 @@ function EditBlog() {
                     id: blog.id,
                     title: blog.title || "",
                     content: blog.content || "",
-                    status: blog.status !== undefined ? !!blog.status : true,
+                    // giữ status luôn là "1" hoặc "0"
+                    status:
+                        blog.status !== undefined
+                            ? String(blog.status)
+                            : "1",
                     image: blog.image || "",
                     image_url: blog.image_url || "",
                 });
@@ -143,11 +145,25 @@ function EditBlog() {
         const { name, value, type, checked } = e.target;
         setForm((prev) => ({
             ...prev,
-            [name]: type === "checkbox" ? checked : value,
+            [name]: type === "checkbox" ? checked : value, // select sẽ lấy value "1"/"0"
         }));
         if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
         if (name === "title") setTitleValid(null);
     }
+
+    // 👉 Đăng ký danh sách font mình muốn cho phép
+    const Font = Quill.import("formats/font");
+    Font.whitelist = [
+        "arial",
+        "roboto",
+        "noto-sans",
+        "times-new-roman",
+        "verdana",
+        "georgia",
+        "tahoma",
+        "courier-new",
+    ];
+    Quill.register(Font, true);
 
     // ✅ Validate form
     function validateForm(data) {
@@ -192,7 +208,8 @@ function EditBlog() {
             const formData = new FormData();
             formData.append("title", form.title);
             formData.append("content", form.content);
-            formData.append("status", form.status ? "1" : "0");
+            // giữ nguyên string "1" hoặc "0"
+            formData.append("status", form.status);
 
             if (imageFile) {
                 formData.append("image", imageFile);
@@ -227,7 +244,7 @@ function EditBlog() {
                 className="add-blog-form two-columns"
                 noValidate
             >
-                {/* Cột 1: Tiêu đề + Trạng thái */}
+                {/* Tiêu đề + Trạng thái */}
                 <div className="form-column">
                     <div className="form-group">
                         <label htmlFor="title">
@@ -255,58 +272,66 @@ function EditBlog() {
                         </div>
                     </div>
 
+                    {/* Trạng thái */}
                     <div className="form-group">
                         <label htmlFor="status">Trạng thái</label>
                         <select
                             id="status"
                             name="status"
-                            value={form.status.toString()}
+                            value={form.status}
                             onChange={handleChange}
                         >
-                            <option value="1">Hoạt động</option>
+                            <option value="1">Hiển thị</option>
                             <option value="0">Ẩn</option>
                         </select>
                     </div>
                 </div>
 
-                {/* Cột 2: Ảnh blog */}
+                {/* Ảnh blog */}
                 <div className="form-column">
                     <div className="form-group">
-                        <label htmlFor="image">Ảnh blog</label>
+                        <label htmlFor="image">Ảnh bài viết</label>
+
                         <div className="image-upload">
                             <label htmlFor="image" className="upload-btn">
-                                {imageFile ? "Thay đổi ảnh" : "Chọn ảnh"}
+                                {imageFile ? `📄 ${imageFile.name}` : "Chọn ảnh"}
                             </label>
                             <input
                                 id="image"
                                 type="file"
                                 accept="image/jpeg, image/png, image/gif"
                                 onChange={handleImageChange}
+                                style={{ display: "none" }} // ẩn input
                             />
-                            {imageFile && (
-                                <span className="file-name">📄 {imageFile.name}</span>
-                            )}
+
                             {errors.image && (
                                 <span className="error-message">⚠️ {errors.image}</span>
                             )}
                         </div>
+
                         <div className="image-preview">
                             {imageFile ? (
                                 <img
                                     src={URL.createObjectURL(imageFile)}
                                     alt="Preview"
+                                    className="preview-img"
                                 />
                             ) : form.image_url ? (
-                                <img src={form.image_url} alt="Old" />
-                            ) : null}
+                                <img
+                                    src={form.image_url}
+                                    alt="Old"
+                                    className="preview-img"
+                                />
+                            ) : (
+                                <div className="no-image">Chưa có ảnh</div>
+                            )}
                         </div>
-                        <div className="image-note">
-                            (Định dạng: JPG, PNG, GIF - Tối đa 2MB)
-                        </div>
+
+                        <div className="image-note">(Định dạng: JPG, PNG, GIF - Tối đa 2MB)</div>
                     </div>
                 </div>
 
-                {/* Full width: Nội dung */}
+                {/* Nội dung */}
                 <div className="form-group full-width">
                     <label htmlFor="content">
                         Nội dung <span className="required">*</span>
@@ -318,17 +343,35 @@ function EditBlog() {
                         placeholder="Nhập nội dung blog (tối thiểu 20 ký tự)"
                         modules={{
                             toolbar: [
-                                ["bold", "italic", "underline", "strike"], // in đậm, nghiêng, gạch chân
-                                [{ color: [] }, { background: [] }],       // 👈 thêm đổi màu chữ & màu nền
-                                [{ list: "ordered" }, { list: "bullet" }], // danh sách
-                                ["link", "image"],                         // chèn link, ảnh
-                                [{ align: [] }],                           // căn chỉnh
-                                ["clean"],                                 // xóa định dạng
+                                [{ font: Font.whitelist }],   // ✅ load font vừa đăng ký
+                                [{ size: ["small", false, "large", "huge"] }],
+                                ["bold", "italic", "underline", "strike"],
+                                [{ color: [] }, { background: [] }],
+                                [{ list: "ordered" }, { list: "bullet" }],
+                                [{ align: [] }],
+                                ["link", "image", "video"],
+                                ["clean"],
                             ],
                         }}
-                        style={{ width: "100%" }}
+                        formats={[
+                            "font",
+                            "size",
+                            "bold",
+                            "italic",
+                            "underline",
+                            "strike",
+                            "color",
+                            "background",
+                            "list",
+                            "bullet",
+                            "align",
+                            "link",
+                            "image",
+                            "video",
+                        ]}
                     />
                 </div>
+
                 {errors.content && (
                     <span className="error-message">⚠️ {errors.content}</span>
                 )}

@@ -3,7 +3,7 @@ import { createBlog, checkBlogTitle } from "../../../services/blogAdmin";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ReactQuill from "react-quill";
+import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "./add.css";
 
@@ -109,6 +109,20 @@ function AddBlog() {
         if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
         if (name === "title") setTitleValid(null);
     }
+
+    // 👉 Đăng ký danh sách font mình muốn cho phép
+    const Font = Quill.import("formats/font");
+    Font.whitelist = [
+        "arial",
+        "roboto",
+        "noto-sans",
+        "times-new-roman",
+        "verdana",
+        "georgia",
+        "tahoma",
+        "courier-new",
+    ];
+    Quill.register(Font, true);
 
     // ✅ Thay cho textarea
     function handleChangeContent(value) {
@@ -237,7 +251,7 @@ function AddBlog() {
                 className="add-blog-form two-columns"
                 noValidate
             >
-                {/* Cột 1: Tiêu đề + Trạng thái */}
+                {/* Tiêu đề + Trạng thái */}
                 <div className="form-column">
                     <div className="form-group">
                         <label htmlFor="title">
@@ -285,6 +299,7 @@ function AddBlog() {
                         </div>
                     </div>
 
+                    {/* Trạng thái */}
                     <div className="form-group">
                         <label htmlFor="status">Trạng thái</label>
                         <select
@@ -299,47 +314,51 @@ function AddBlog() {
                     </div>
                 </div>
 
-                {/* Cột 2: Ảnh blog */}
+                {/* Ảnh blog */}
                 <div className="form-column">
                     <div className="form-group">
-                        <label htmlFor="image">Ảnh blog</label>
+                        <label htmlFor="image">Ảnh bài viết</label>
+
                         <div className="image-upload">
                             <label htmlFor="image" className="upload-btn">
-                                {imageFile ? "Thay đổi ảnh" : "Chọn ảnh"}
+                                {imageFile ? `📄 ${imageFile.name}` : "Chọn ảnh"}
                             </label>
                             <input
                                 id="image"
                                 type="file"
                                 accept="image/jpeg, image/png, image/gif"
                                 onChange={handleImageChange}
+                                style={{ display: "none" }} // ẩn input
                             />
-                            {imageFile && (
-                                <span className="file-name">
-                                    📄 {imageFile.name}
-                                </span>
-                            )}
+
                             {errors.image && (
-                                <span className="error-message">
-                                    ⚠️ {errors.image}
-                                </span>
+                                <span className="error-message">⚠️ {errors.image}</span>
                             )}
                         </div>
-                        {imageFile && (
-                            <div className="image-preview">
+
+                        <div className="image-preview">
+                            {imageFile ? (
                                 <img
                                     src={URL.createObjectURL(imageFile)}
                                     alt="Preview"
                                     className="preview-img"
                                 />
-                            </div>
-                        )}
-                        <div className="image-note">
-                            (Định dạng: JPG, PNG, GIF - Tối đa 2MB)
+                            ) : form.image_url ? (
+                                <img
+                                    src={form.image_url}
+                                    alt="Old"
+                                    className="preview-img"
+                                />
+                            ) : (
+                                <div className="no-image">Chưa có ảnh</div>
+                            )}
                         </div>
+
+                        <div className="image-note">(Định dạng: JPG, PNG, GIF - Tối đa 2MB)</div>
                     </div>
                 </div>
 
-                {/* Full width: Nội dung */}
+                {/* Nội dung */}
                 <div className="form-group full-width">
                     <label htmlFor="content">
                         Nội dung <span className="required">*</span>
@@ -351,22 +370,39 @@ function AddBlog() {
                         placeholder="Nhập nội dung blog (tối thiểu 20 ký tự)"
                         modules={{
                             toolbar: [
-                                ["bold", "italic", "underline", "strike"], // in đậm, nghiêng, gạch chân
-                                [{ color: [] }, { background: [] }],       // 👈 thêm đổi màu chữ & màu nền
-                                [{ list: "ordered" }, { list: "bullet" }], // danh sách
-                                ["link", "image"],                         // chèn link, ảnh
-                                [{ align: [] }],                           // căn chỉnh
-                                ["clean"],                                 // xóa định dạng
+                                [{ font: Font.whitelist }],   // ✅ load font vừa đăng ký
+                                [{ size: ["small", false, "large", "huge"] }],
+                                ["bold", "italic", "underline", "strike"],
+                                [{ color: [] }, { background: [] }],
+                                [{ list: "ordered" }, { list: "bullet" }],
+                                [{ align: [] }],
+                                ["link", "image", "video"],
+                                ["clean"],
                             ],
                         }}
-                        style={{ width: "100%" }}
+                        formats={[
+                            "font",
+                            "size",
+                            "bold",
+                            "italic",
+                            "underline",
+                            "strike",
+                            "color",
+                            "background",
+                            "list",
+                            "bullet",
+                            "align",
+                            "link",
+                            "image",
+                            "video",
+                        ]}
                     />
                 </div>
                 {errors.content && (
                     <span className="error-message">⚠️ {errors.content}</span>
                 )}
 
-                {/* Full width: Nút submit */}
+                {/* Nút submit */}
                 <div className="form-actions full-width">
                     <button
                         type="submit"

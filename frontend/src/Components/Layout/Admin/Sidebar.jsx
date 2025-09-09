@@ -1,21 +1,21 @@
 import { Link, useLocation } from "react-router-dom";
 import React, { useEffect, useState, useRef } from "react";
-import { getUnreadCount, markEmailsAsRead } from "../../../services/emailAdmin";
+import { getUnreadCount } from "../../../services/emailAdmin";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Sidebar = () => {
     const location = useLocation();
     const [unreadCount, setUnreadCount] = useState(0);
-    const prevCountRef = useRef(0); // lưu giá trị cũ để so sánh
+    const prevCountRef = useRef(0);
+    const isFirstLoadRef = useRef(true);
 
     useEffect(() => {
         const fetchUnread = async () => {
             try {
                 const count = await getUnreadCount();
 
-                // Nếu có email mới hơn số trước đó thì báo
-                if (count > prevCountRef.current) {
+                if (!isFirstLoadRef.current && count > prevCountRef.current) {
                     toast.info(`📩 Bạn có ${count - prevCountRef.current} email mới`, {
                         position: "top-right",
                     });
@@ -23,21 +23,16 @@ const Sidebar = () => {
 
                 setUnreadCount(count);
                 prevCountRef.current = count;
+                isFirstLoadRef.current = false; // ✅ sau lần đầu thì set false
             } catch (err) {
                 console.error(err);
             }
         };
 
         fetchUnread();
-        const interval = setInterval(fetchUnread, 5000); // refresh mỗi 10s
+        const interval = setInterval(fetchUnread, 5000);
         return () => clearInterval(interval);
     }, []);
-
-    const handleEmailClick = async () => {
-        await markEmailsAsRead();
-        setUnreadCount(0);
-        prevCountRef.current = 0; // reset luôn
-    };
 
     return (
         <>
@@ -68,7 +63,6 @@ const Sidebar = () => {
                                 label="Quản lý email"
                                 isActive={location.pathname === "/admin/emails"}
                                 unreadCount={unreadCount}
-                                onClick={handleEmailClick}
                             />
                             <SidebarItem to="/admin/schedule" icon="bi-clock-history" label="Quản lý lịch" isActive={location.pathname === "/admin/schedule"} />
                             <SidebarItem to="/admin/rooms" icon="bi-building" label="Quản lý phòng" isActive={location.pathname === "/admin/rooms"} />
@@ -84,7 +78,6 @@ const Sidebar = () => {
                 </div>
             </aside>
 
-            {/* Toast Container để hiển thị thông báo */}
             <ToastContainer />
         </>
     );
@@ -112,6 +105,7 @@ const SidebarItem = ({ to, icon, label, isActive, unreadCount, onClick }) => (
                         height: "22px",
                         fontSize: "12px",
                         lineHeight: "1",
+                        boxShadow: "0 0 4px rgba(255, 0, 0, 1)",
                     }}
                 >
                     {unreadCount}

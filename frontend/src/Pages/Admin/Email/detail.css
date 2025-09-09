@@ -84,3 +84,48 @@
 .btn-back:active {
   transform: translateY(1px);
 }
+
+.reply-section {
+  margin-top: 20px;
+  padding: 15px;
+  border-top: 1px solid #ddd;
+}
+
+.reply-header {
+  display: flex;
+  justify-content: space-between; /* h3 trái - nút phải */
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.reply-box {
+  width: 100%;
+  min-height: 100px;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  resize: vertical;
+}
+
+.btn-send {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.btn-send:hover {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+}
+
+.btn-send:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}

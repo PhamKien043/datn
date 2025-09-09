@@ -20,22 +20,51 @@ export const getEmailById = async (id) => {
 
 // Lấy số email chưa đọc
 export const getUnreadCount = async () => {
-  try {
-    const response = await instance.get("admin/emails/unread-count");
-    return response.data?.count ?? 0;
-  } catch (error) {
-    console.error("Lỗi khi lấy số email chưa đọc:", error);
-    throw new Error("Không thể lấy số email chưa đọc");
-  }
+  const response = await instance.get("admin/emails/unread-count");
+  return response.data?.count ?? 0;
 };
 
+
 // Đánh dấu tất cả email đã đọc
-export const markEmailsAsRead = async () => {
+export const markEmailAsRead = async (id) => {
   try {
-    const response = await instance.post("admin/emails/mark-read");
+    const response = await instance.post(`admin/emails/${id}/mark-read`);
     return response.data?.success ?? false;
   } catch (error) {
     console.error("Lỗi khi đánh dấu email đã đọc:", error);
     throw new Error("Không thể cập nhật trạng thái email");
   }
 };
+
+// Gửi phản hồi email
+export const sendEmailReply = async (id, replyMessage) => {
+  try {
+    const response = await instance.post(`admin/emails/${id}/reply`, {
+      message: replyMessage,
+    });
+    return response.data.data; // ⚡ lấy object email đã cập nhật
+  } catch (error) {
+    console.error("Lỗi khi gửi phản hồi:", error);
+    throw new Error("Không thể gửi phản hồi email");
+  }
+};
+
+const handleSendReply = async () => {
+  if (!replyMessage.trim()) {
+    toast.warning("⚠️ Vui lòng nhập nội dung phản hồi!");
+    return;
+  }
+  setSending(true);
+  try {
+    const updatedEmail = await sendEmailReply(id, replyMessage);
+    toast.success("Phản hồi đã được gửi tới khách hàng!");
+
+    setEmail(updatedEmail); // ✅ cập nhật state email
+    setReplyMessage(updatedEmail.reply_message); // ✅ giữ lại nội dung phản hồi
+  } catch (err) {
+    toast.error("Gửi phản hồi thất bại!");
+  } finally {
+    setSending(false);
+  }
+};
+

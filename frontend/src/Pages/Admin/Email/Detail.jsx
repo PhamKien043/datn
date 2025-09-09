@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { getEmailById } from "../../../services/emailAdmin"; // 👈 service lấy 1 email
+import { getEmailById, sendEmailReply } from "../../../services/emailAdmin";
 import "react-toastify/dist/ReactToastify.css";
 import "./detail.css";
 
@@ -11,16 +11,20 @@ function EmailDetail() {
 
   const [email, setEmail] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [replyMessage, setReplyMessage] = useState("");
+  const [sending, setSending] = useState(false);
 
-  // ✅ Lấy email từ API
+  // Lấy email từ API
   useEffect(() => {
     const fetchEmail = async () => {
       try {
         const data = await getEmailById(id);
         setEmail(data);
+        if (data.reply_message) {
+          setReplyMessage(data.reply_message);
+        }
       } catch (err) {
-        console.error("Lỗi khi load email:", err);
-        toast.error("❌ Không thể tải dữ liệu email");
+        toast.error("Không thể tải dữ liệu email");
         navigate("/admin/emails");
       } finally {
         setLoading(false);
@@ -29,8 +33,39 @@ function EmailDetail() {
     fetchEmail();
   }, [id, navigate]);
 
-  if (loading) return <p>⏳ Đang tải dữ liệu...</p>;
-  if (!email) return <p>❌ Không tìm thấy email</p>;
+  // Hàm gửi / cập nhật phản hồi
+  const handleSendReply = async () => {
+    if (!replyMessage.trim()) {
+      toast.warning("⚠️ Vui lòng nhập nội dung phản hồi!");
+      return;
+    }
+    setSending(true);
+    try {
+      const updatedEmail = await sendEmailReply(id, replyMessage); // API trả về email đã update
+      toast.success(
+        email?.is_replied
+          ? "Phản hồi đã được cập nhật!"
+          : "Phản hồi đã được gửi tới khách hàng!"
+      );
+      setEmail(updatedEmail);
+      setReplyMessage(updatedEmail.reply_message); // ✅ giữ lại nội dung phản hồi
+    } catch (err) {
+      toast.error("Gửi phản hồi thất bại!");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="my-5 text-center">
+        <div className="spinner-border text-primary" role="status"></div>
+        <p className="mt-3">Đang tải dữ liệu email...</p>
+      </div>
+    );
+  }
+
+  if (!email) return <p>Không tìm thấy email</p>;
 
   return (
     <div className="email-detail-container">
@@ -63,6 +98,31 @@ function EmailDetail() {
           {new Date(email.created_at).toLocaleString()}
         </div>
       </div>
+
+      {/* Form phản hồi */}
+      <div className="reply-section">
+        <div className="reply-header">
+          <h3>✉️ Phản hồi khách hàng</h3>
+          <button
+            className="btn-send"
+            onClick={handleSendReply}
+            disabled={sending}
+          >
+            {sending
+              ? "⏳ Đang gửi..."
+              : email?.is_replied
+                ? "🔄 Cập nhật phản hồi"
+                : "📨 Gửi phản hồi"}
+          </button>
+        </div>
+        <textarea
+          className="reply-box"
+          placeholder="Nhập nội dung phản hồi..."
+          value={replyMessage}
+          onChange={(e) => setReplyMessage(e.target.value)}
+        />
+      </div>
+
     </div>
   );
 }

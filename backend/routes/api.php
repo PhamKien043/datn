@@ -83,7 +83,8 @@ Route::prefix('admin')->group(function () {
     Route::get('/email', [EmailAdminController::class, 'index']);
     Route::get('/email/{id}', [EmailAdminController::class, 'show']);
     Route::get('/emails/unread-count', [EmailAdminController::class, 'getUnreadCount']);
-    Route::post('/emails/mark-read', [EmailAdminController::class, 'markAsRead']);
+    Route::post('/emails/{id}/mark-read', [EmailAdminController::class, 'markRead']);
+    Route::post('/emails/{id}/reply', [EmailAdminController::class, 'reply']);
 });
 
 Route::post('/emails', [EmailController::class, 'store']);

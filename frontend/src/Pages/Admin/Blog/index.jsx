@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllBlogs, deleteBlog } from "../../../services/blogAdmin";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./blog.css";
 
@@ -28,19 +29,18 @@ function BlogList() {
         }
     };
 
-    // Hàm loại bỏ HTML tag
+    // Loại bỏ HTML trong content
     function stripHtml(html) {
         const div = document.createElement("div");
         div.innerHTML = html;
         return div.textContent || div.innerText || "";
     }
 
-    // ✅ Hàm xóa có hiển thị thông báo + delay reload
+    // Xóa blog
     const handleDelete = async (id) => {
         if (window.confirm("Bạn có chắc chắn muốn xóa bài viết này?")) {
             try {
                 await deleteBlog(id);
-                // ✅ Cập nhật UI không cần reload
                 setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog.id !== id));
                 toast.success("🗑️ Xóa thành công!");
             } catch (err) {
@@ -50,7 +50,7 @@ function BlogList() {
         }
     };
 
-    // ✅ Hàm lọc với select và input
+    // Bộ lọc
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
         setFilters({
@@ -59,7 +59,6 @@ function BlogList() {
         });
         setCurrentPage(1);
     };
-
 
     const resetFilters = () => {
         setFilters({ title: "", status: "" });
@@ -71,6 +70,7 @@ function BlogList() {
         (filters.status !== "" ? Number(v.status) === Number(filters.status) : true)
     );
 
+    // Phân trang
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentBlogs = filteredBlogs.slice(indexOfFirstItem, indexOfLastItem);
@@ -84,14 +84,11 @@ function BlogList() {
     );
 
     if (error) return (
-        <div className="my-5">
-            <div className="alert alert-danger text-center">{error}</div>
-        </div>
+        <div className="my-5 text-center text-danger">❌ {error}</div>
     );
 
     return (
         <div className="menus-container">
-
             <div className="header-section">
                 <h2>📝 Quản lý Bài Viết</h2>
                 <button className="btn-add" onClick={() => navigate("/admin/blog/add")}>
@@ -99,11 +96,12 @@ function BlogList() {
                 </button>
             </div>
 
+            {/* Bộ lọc */}
             <div className="menus-actions">
                 <input
                     type="text"
                     name="title"
-                    placeholder="🔎 Tìm theo tên bài viết..."
+                    placeholder="🔎 Tìm theo tiêu đề..."
                     value={filters.title}
                     onChange={handleFilterChange}
                 />
@@ -118,7 +116,13 @@ function BlogList() {
             </div>
 
             {filteredBlogs.length === 0 ? (
-                <p className="no-data">Không có bài viết nào phù hợp.</p>
+                <p className="no-data">
+                    {filters.status === 1
+                        ? "✅ Hiện tại không có bài viết hiển thị."
+                        : filters.status === 0
+                        ? "🚫 Hiện tại không có bài viết bị ẩn."
+                        : "⚠️ Không có bài viết nào phù hợp."}
+                </p>
             ) : (
                 <>
                     <table className="menus-table">
@@ -156,11 +160,13 @@ function BlogList() {
                                     <td className="blog-content">
                                         {stripHtml(blog.content).substring(0, 60)}...
                                     </td>
-
-                                    <td className={blog.status ? "status-active" : "status-inactive"}>
-                                        {blog.status ? "Hiển thị" : "Ẩn"}
+                                    <td>
+                                        {blog.status ? (
+                                            <span className="status-active">Hiển thị</span>
+                                        ) : (
+                                            <span className="status-inactive">Ẩn</span>
+                                        )}
                                     </td>
-
                                     <td>
                                         {blog.created_at
                                             ? new Date(blog.created_at).toLocaleDateString("vi-VN", {
@@ -170,14 +176,13 @@ function BlogList() {
                                             })
                                             : "Không có dữ liệu"}
                                     </td>
-
                                     <td>
                                         <div className="action-buttons">
                                             <button
                                                 className="btn-view"
                                                 onClick={() => navigate(`/admin/blog/detail/${blog.id}`)}
                                             >
-                                                👁️ Xem chi tiết
+                                                👁️ Xem
                                             </button>
                                             <button
                                                 className="btn-edit"
@@ -198,6 +203,7 @@ function BlogList() {
                         </tbody>
                     </table>
 
+                    {/* Phân trang */}
                     {totalPages > 1 && (
                         <div className="pagination">
                             <button disabled={currentPage === 1} onClick={() => setCurrentPage(1)}>««</button>

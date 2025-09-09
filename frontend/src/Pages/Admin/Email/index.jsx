@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import { getAllEmails } from "../../../services/emailAdmin";
+import { getAllEmails, markEmailAsRead } from "../../../services/emailAdmin";
 import "./email.css";
 
 function EmailList() {
     const [loading, setLoading] = useState(true);
     const [emails, setEmails] = useState([]);
-    const [filters, setFilters] = useState({ name: "", email: "", fromDate: "", toDate: "" });
+    const [filters, setFilters] = useState({
+        name: "",
+        email: "",
+        fromDate: "",
+        toDate: "",
+        status: "",
+    });
     const [currentPage, setCurrentPage] = useState(1);
     const [error, setError] = useState(null);
     const [activeId, setActiveId] = useState(null);
@@ -51,13 +57,11 @@ function EmailList() {
     // ✅ Khi lỗi
     if (error) {
         return (
-            <div className="my-5 text-center text-danger">
-                ❌ {error}
-            </div>
+            <div className="my-5 text-center text-danger">❌ {error}</div>
         );
     }
 
-    // ✅ Xử lý tìm kiếm
+    // ✅ Xử lý thay đổi filter
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
         setFilters((prev) => ({ ...prev, [name]: value }));
@@ -65,14 +69,24 @@ function EmailList() {
     };
 
     const resetFilters = () => {
-        setFilters({ name: "", email: "", fromDate: "", toDate: "" });
+        setFilters({
+            name: "",
+            email: "",
+            fromDate: "",
+            toDate: "",
+            status: "",
+        });
         setCurrentPage(1);
     };
 
     // ✅ Lọc dữ liệu
     const filteredEmails = emails.filter((item) => {
-        const matchesName = item.name?.toLowerCase().includes(filters.name.toLowerCase());
-        const matchesEmail = item.email?.toLowerCase().includes(filters.email.toLowerCase());
+        const matchesName = item.name
+            ?.toLowerCase()
+            .includes(filters.name.toLowerCase());
+        const matchesEmail = item.email
+            ?.toLowerCase()
+            .includes(filters.email.toLowerCase());
 
         // so sánh ngày
         const createdAt = item.created_at ? new Date(item.created_at) : null;
@@ -86,31 +100,52 @@ function EmailList() {
             if (createdAt > toDate) matchesDate = false;
         }
 
-        return matchesName && matchesEmail && matchesDate;
+        // ✅ lọc theo trạng thái
+        let matchesStatus = true;
+        if (filters.status === "unread") {
+            if (item.is_read || item.is_replied) matchesStatus = false;
+        }
+        if (filters.status === "read") {
+            if (!item.is_read || item.is_replied) matchesStatus = false;
+        }
+        if (filters.status === "replied") {
+            if (!item.is_replied) matchesStatus = false;
+        }
+
+        return matchesName && matchesEmail && matchesDate && matchesStatus;
     });
 
     // ✅ Phân trang
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentEmails = filteredEmails.slice(indexOfFirstItem, indexOfLastItem);
+    const currentEmails = filteredEmails.slice(
+        indexOfFirstItem,
+        indexOfLastItem
+    );
     const totalPages = Math.ceil(filteredEmails.length / itemsPerPage);
 
-    // ✅ Hàm kiểm tra có phải là email mới hôm nay không
-    const isNewToday = (createdAt) => {
-        if (!createdAt) return false;
-        const today = new Date();
-        const createdDate = new Date(createdAt);
-
-        return (
-            createdDate.getDate() === today.getDate() &&
-            createdDate.getMonth() === today.getMonth() &&
-            createdDate.getFullYear() === today.getFullYear()
-        );
+    // ✅ Xử lý xem chi tiết email
+    const handleViewDetail = async (email) => {
+        try {
+            if (!email.is_read) {
+                const success = await markEmailAsRead(email.id);
+                if (success) {
+                    setEmails((prev) =>
+                        prev.map((item) =>
+                            item.id === email.id ? { ...item, is_read: true } : item
+                        )
+                    );
+                }
+            }
+            setActiveId(email.id);
+            navigate(`/admin/email/${email.id}`);
+        } catch (err) {
+            console.error("Lỗi khi cập nhật email:", err);
+        }
     };
 
     return (
         <div className="menus-container">
-
             <div className="header-section">
                 <h2>📩 Quản lý Liên Hệ / Email</h2>
             </div>
@@ -131,30 +166,36 @@ function EmailList() {
                     value={filters.email}
                     onChange={handleFilterChange}
                 />
-                <div className="date-input">
-                    <input
-                        type="date"
-                        name="fromDate"
-                        value={filters.fromDate}
-                        onChange={handleFilterChange}
-                    />
-                </div>
-                <div className="date-input">
-                    <input
-                        type="date"
-                        name="toDate"
-                        value={filters.toDate}
-                        onChange={handleFilterChange}
-                    />
-                </div>
 
-                <button className="btn-add btn-outline-warning" onClick={resetFilters}>
+                <select
+                    name="status"
+                    value={filters.status}
+                    onChange={handleFilterChange}
+                >
+                    <option value="">-- Tất cả --</option>
+                    <option value="unread">Chưa đọc</option>
+                    <option value="read">Đã đọc</option>
+                    <option value="replied">Đã phản hồi</option>
+                </select>
+
+                <button
+                    className="btn-add btn-outline-warning"
+                    onClick={resetFilters}
+                >
                     Làm mới
                 </button>
             </div>
 
             {filteredEmails.length === 0 ? (
-                <p className="no-data">⚠️ Không có dữ liệu phù hợp.</p>
+                <p className="no-data">
+                    {filters.status === "unread"
+                        ? "📩 Hiện tại không có email chưa đọc."
+                        : filters.status === "read"
+                            ? "📬 Hiện tại không có email đã đọc."
+                            : filters.status === "replied"
+                                ? "✅ Hiện tại không có email đã phản hồi."
+                                : "⚠️ Không có dữ liệu phù hợp."}
+                </p>
             ) : (
                 <>
                     <table className="menus-table">
@@ -175,8 +216,12 @@ function EmailList() {
                                     <td>{indexOfFirstItem + idx + 1}</td>
                                     <td>
                                         {email.name}{" "}
-                                        {isNewToday(email.created_at) && (
-                                            <span className="new-badge">Mới</span>
+                                        {email.is_replied ? (
+                                            <span className="replied-badge">Đã phản hồi</span>
+                                        ) : email.is_read ? (
+                                            <span className="read-badge">Đã đọc</span>
+                                        ) : (
+                                            <span className="unread-dot"></span>
                                         )}
                                     </td>
                                     <td>{email.email}</td>
@@ -186,23 +231,24 @@ function EmailList() {
                                     </td>
                                     <td>
                                         {email.created_at
-                                            ? new Date(email.created_at).toLocaleDateString("vi-VN", {
-                                                day: "2-digit",
-                                                month: "2-digit",
-                                                year: "numeric",
-                                            })
+                                            ? new Date(email.created_at).toLocaleDateString(
+                                                "vi-VN",
+                                                {
+                                                    day: "2-digit",
+                                                    month: "2-digit",
+                                                    year: "numeric",
+                                                }
+                                            )
                                             : "Không có dữ liệu"}
                                     </td>
                                     <td
-                                        className={`td-action ${activeId === email.id ? "active" : ""}`}
+                                        className={`td-action ${activeId === email.id ? "active" : ""
+                                            }`}
                                     >
                                         <div className="action-buttons">
                                             <button
                                                 className="btn-view"
-                                                onClick={() => {
-                                                    setActiveId(email.id);
-                                                    navigate(`/admin/email/${email.id}`);
-                                                }}
+                                                onClick={() => handleViewDetail(email)}
                                             >
                                                 👁️ Xem chi tiết
                                             </button>
@@ -216,8 +262,18 @@ function EmailList() {
                     {/* ✅ Phân trang */}
                     {totalPages > 1 && (
                         <div className="pagination">
-                            <button disabled={currentPage === 1} onClick={() => setCurrentPage(1)}>««</button>
-                            <button disabled={currentPage === 1} onClick={() => setCurrentPage(prev => prev - 1)}>«</button>
+                            <button
+                                disabled={currentPage === 1}
+                                onClick={() => setCurrentPage(1)}
+                            >
+                                ««
+                            </button>
+                            <button
+                                disabled={currentPage === 1}
+                                onClick={() => setCurrentPage((prev) => prev - 1)}
+                            >
+                                «
+                            </button>
                             {[...Array(totalPages)].map((_, i) => (
                                 <button
                                     key={i + 1}
@@ -227,8 +283,18 @@ function EmailList() {
                                     {i + 1}
                                 </button>
                             ))}
-                            <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(prev => prev + 1)}>»</button>
-                            <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(totalPages)}>»»</button>
+                            <button
+                                disabled={currentPage === totalPages}
+                                onClick={() => setCurrentPage((prev) => prev + 1)}
+                            >
+                                »
+                            </button>
+                            <button
+                                disabled={currentPage === totalPages}
+                                onClick={() => setCurrentPage(totalPages)}
+                            >
+                                »»
+                            </button>
                         </div>
                     )}
                 </>

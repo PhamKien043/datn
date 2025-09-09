@@ -12,6 +12,7 @@ function Contact() {
   });
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false); // ✅ trạng thái đang gửi
 
   const validateForm = () => {
     const newErrors = {};
@@ -20,7 +21,6 @@ function Contact() {
     if (!formData.name.trim()) {
       newErrors.name = "Vui lòng nhập tên của bạn";
     } else {
-      // Regex: chỉ cho chữ cái, dấu tiếng Việt, khoảng trắng
       const nameRegex = /^[\p{L}\s]+$/u;
       if (!nameRegex.test(formData.name.trim())) {
         newErrors.name = "Tên của bạn không hợp lệ";
@@ -72,24 +72,31 @@ function Contact() {
 
     if (!validateForm()) return;
 
-    fetch('http://localhost:4500/Contact', {
-      method: 'POST',
+    setLoading(true); // ✅ bật trạng thái đang gửi
+
+    fetch("http://localhost:4500/Contact", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
     })
       .then(async (response) => {
         if (response.status === 200) {
           await sendContact(formData);
-          toast.success('Gửi email thành công! Chúng tôi sẽ phản hồi sớm nhất có thể.');
-          setFormData({ name: '', email: '', phone: "", message: '' });
+          toast.success(
+            "Gửi email thành công! Chúng tôi sẽ phản hồi sớm nhất có thể."
+          );
+          setFormData({ name: "", email: "", phone: "", message: "" });
         } else {
-          toast.error('Gửi email thất bại!');
+          toast.error("Gửi email thất bại!");
         }
       })
       .catch(() => {
-        toast.error('Không thể kết nối tới máy chủ!');
+        toast.error("Không thể kết nối tới máy chủ!");
+      })
+      .finally(() => {
+        setLoading(false); // ✅ tắt trạng thái đang gửi
       });
   };
 
@@ -115,12 +122,14 @@ function Contact() {
                   {/* Name */}
                   <input
                     type="text"
-                    className={`form-control mb-1 p-3 border-primary rounded ${errors.name ? "is-invalid" : ""
-                      }`}
+                    className={`form-control mb-1 p-3 border-primary rounded ${
+                      errors.name ? "is-invalid" : ""
+                    }`}
                     placeholder="Tên Của Bạn"
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
+                    disabled={loading}
                   />
                   {errors.name && (
                     <small className="text-danger">{errors.name}</small>
@@ -130,12 +139,14 @@ function Contact() {
                   {/* Email */}
                   <input
                     type="email"
-                    className={`form-control mb-1 p-3 border-primary rounded ${errors.email ? "is-invalid" : ""
-                      }`}
+                    className={`form-control mb-1 p-3 border-primary rounded ${
+                      errors.email ? "is-invalid" : ""
+                    }`}
                     placeholder="Nhập Email Của Bạn"
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
+                    disabled={loading}
                   />
                   {errors.email && (
                     <small className="text-danger">{errors.email}</small>
@@ -145,12 +156,14 @@ function Contact() {
                   {/* Phone */}
                   <input
                     type="text"
-                    className={`form-control mb-1 p-3 border-primary rounded ${errors.phone ? "is-invalid" : ""
-                      }`}
+                    className={`form-control mb-1 p-3 border-primary rounded ${
+                      errors.phone ? "is-invalid" : ""
+                    }`}
                     placeholder="Số Điện Thoại Của Bạn"
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
+                    disabled={loading}
                   />
                   {errors.phone && (
                     <small className="text-danger">{errors.phone}</small>
@@ -159,13 +172,15 @@ function Contact() {
 
                   {/* Message */}
                   <textarea
-                    className={`form-control mb-1 p-3 border-primary rounded ${errors.message ? "is-invalid" : ""
-                      }`}
+                    className={`form-control mb-1 p-3 border-primary rounded ${
+                      errors.message ? "is-invalid" : ""
+                    }`}
                     rows={5}
                     placeholder="Tin Nhắn Của Bạn"
                     name="message"
                     value={formData.message}
                     onChange={handleInputChange}
+                    disabled={loading}
                   />
                   {errors.message && (
                     <small className="text-danger">{errors.message}</small>
@@ -175,8 +190,9 @@ function Contact() {
                   <button
                     className="btn btn-primary w-100 py-3 rounded-pill shadow-sm"
                     type="submit"
+                    disabled={loading}
                   >
-                    Gửi Ngay
+                    {loading ? "Đang gửi..." : "Gửi Ngay"}
                   </button>
                 </form>
               </div>

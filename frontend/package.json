@@ -1,11 +1,11 @@
 {
-  "name": "thanhtruc_pc09380",
+  "name": "datn",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build --base=./",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },

@@ -25,6 +25,7 @@ class User extends Authenticatable
         'role',
         'google_id',
         'provider',
+        'provider_id',
         'remember_token',
     ];
 
@@ -58,6 +59,6 @@ class User extends Authenticatable
     {
         return $this->role === 1; // 1 = user
     }
-    
+
 
 }

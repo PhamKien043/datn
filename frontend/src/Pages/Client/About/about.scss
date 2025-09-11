@@ -1,127 +1,119 @@
-/******* Customized Bootstrap ********/
+// about.scss
 
-$primary: #D4A762;
-$secondary: #9A9A9A;
-$light: #FFFCF8;
-$dark: #050709;
+// Màu chủ đạo xanh tím
+$primary-color: #6f42c1;
 
-$font-family-base: 'Open Sans', sans-serif;
-
-$headings-font-family: 'Playball', cursive;
-
-$body-color: $secondary;
-
-$headings-color: $dark;
-
-$headings-font-weight: 600;
-
-$display-font-weight: 400;
-
-$enable-responsive-font-sizes: true;
-
-$border-radius: 8px;
-
-$border-radius-sm: $border-radius;
-
-$border-radius-lg: $border-radius;
-
-$link-decoration: none;
-
-$enable-negative-margins: true;
-
-/* Dùng chung biến bootstrap bạn đã config:
-$primary: #D4A762; $secondary: #9A9A9A; $light: #FFFCF8; $dark: #050709; */
-
-.py-6 { padding-top: 4rem; padding-bottom: 4rem; }
-
-.text-gradient {
-  background: linear-gradient(90deg, $primary 0%, lighten($primary, 18%) 100%);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
+// =============================
+// HERO & SECTIONS
+// =============================
+.about-hero,
+section {
+  background-color: #fff;
+  color: $primary-color;
 }
 
+// Badge
 .about-badge {
-  background: #fff3d8;
-  color: #5c420e;
-  border: 1px solid #f6e4bd;
+  background-color: lighten($primary-color, 40%);
+  color: $primary-color;
 }
 
-/* HERO */
-.about-hero {
-  position: relative;
-  min-height: 520px;
-  background-size: cover;
-  background-position: center;
-  isolation: isolate;
-  &::before {
-    content: "";
-    position: absolute; inset: 0;
-    background: linear-gradient(
-                    to right,
-                    rgba(255, 244, 224, 0.95) 0%,
-                    rgba(255, 244, 224, 0.80) 40%,
-                    rgba(255, 244, 224, 0.25) 100%
-    );
-    z-index: -1;
+// Text gradient
+.text-gradient {
+  background: linear-gradient(45deg, $primary-color, darken($primary-color, 15%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+// =============================
+// BUTTONS
+// =============================
+.btn-primary {
+  background-color: $primary-color !important;
+  border-color: $primary-color !important;
+  color: #fff !important;
+
+  &:hover {
+    background-color: darken($primary-color, 10%) !important;
+    border-color: darken($primary-color, 10%) !important;
   }
 }
 
-.glass {
-  background: rgba(255, 255, 255, 0.78);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(0,0,0,0.05);
+.btn-outline-dark {
+  border-color: $primary-color !important;
+  color: $primary-color !important;
+
+  &:hover {
+    background-color: $primary-color !important;
+    color: #fff !important;
+  }
 }
 
-.feature-list { margin: 0; padding-left: 0; list-style: none; li { margin-bottom: .5rem; color: #444; } }
+// =============================
+// FEATURE LIST & MINI CARD
+// =============================
+.text-primary,
+.feature-list i,
+.value-card i {
+  color: $primary-color !important;
+}
 
-.object-cover { object-fit: cover; }
-
-/* MINI CARDS */
 .mini-card {
+  border: 1px solid lighten($primary-color, 35%);
+  color: $primary-color;
   background: #fff;
-  border: 1px solid #f1ece4;
-  transition: transform .15s ease, box-shadow .15s ease;
-  &:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.06); }
 }
 
-/* STATS */
-.stat-card {
-  background: #fff;
-  border: 1px solid #f1ece4;
-}
-
-/* VALUES */
+// =============================
+// VALUE CARD
+// =============================
 .value-card {
   background: #fff;
-  border: 1px solid #f1ece4;
-  transition: transform .15s ease, box-shadow .15s ease;
-  &:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,.08); }
+  border: 1px solid lighten($primary-color, 35%);
+  color: $primary-color;
 }
 
-.icon-blob {
-  width: 44px; height: 44px;
-  display: inline-flex; align-items: center; justify-content: center;
-  border-radius: 12px;
-  background: linear-gradient(180deg, #fff6e6 0%, #ffe6bf 100%);
-  color: darken($primary, 18%);
+// =============================
+// TEAM CARD
+// =============================
+.team-card {
+  background: #fff;
+  border: 1px solid #eee;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  .team-photo {
+    position: relative;
+    img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .team-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba($primary-color, 0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+  }
+
+  &:hover .team-overlay {
+    opacity: 1;
+  }
 }
 
-/* TEAM */
-.team-card { border: 1px solid #f1ece4; }
-.team-photo { position: relative; aspect-ratio: 4 / 3; }
-.team-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.team-overlay {
-  position: absolute; inset: 0;
-  display: grid; place-items: center;
-  background: linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,.45) 100%);
-  opacity: 0; transition: opacity .2s ease;
-}
-.team-card:hover .team-overlay { opacity: 1; }
-
-/* CTA */
+// =============================
+// CTA SECTION
+// =============================
 .cta-gradient {
-  background: linear-gradient(90deg, darken($primary, 18%), $primary);
+  background: linear-gradient(135deg, $primary-color, darken($primary-color, 15%));
   color: #fff;
 }
-
-
-@import "bootstrap/scss/bootstrap";

@@ -1,5 +1,5 @@
 import React from "react";
-import "./about.scss"; // dùng 1 file SCSS là đủ
+import "./about.scss"; // chỉ cần 1 file SCSS
 
 export default function About() {
     return (
@@ -15,11 +15,11 @@ export default function About() {
                             <span className="badge rounded-pill px-3 py-2 about-badge">
                                 Giới thiệu về chúng tôi
                             </span>
-                            <h1 className="display-4 fw-bold mt-3 mb-3 text-dark">
+                            <h1 className="display-4 fw-bold mt-3 mb-3">
                                 Tổ chức sự kiện <span className="text-gradient">đẳng cấp</span>,{" "}
                                 trải nghiệm <span className="text-gradient">đáng nhớ</span>
                             </h1>
-                            <p className="lead text-muted mb-4">
+                            <p className="lead mb-4">
                                 20+ năm kiến tạo những buổi tiệc hoàn hảo – cưới hỏi, hội nghị, sự
                                 kiện doanh nghiệp. Đội ngũ tận tâm, không gian sang trọng, thực đơn
                                 tinh tế.
@@ -82,11 +82,11 @@ export default function About() {
                             </div>
                         </div>
                         <div className="col-lg-6">
-                            <small className="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-3 py-1 mb-3">
+                            <small className="d-inline-block fw-bold text-uppercase bg-light border border-primary rounded-pill px-3 py-1 mb-3">
                                 Về chúng tôi
                             </small>
                             <h2 className="fw-bold mb-3">Không gian tân cổ điển Châu Âu</h2>
-                            <p className="text-muted">
+                            <p>
                                 Kiến trúc tối giản để tôn lên vẻ sang trọng. Mỗi sảnh tiệc có chủ đề
                                 riêng, phù hợp xu hướng hiện đại và được trang bị hệ thống âm thanh –
                                 ánh sáng tối tân, màn hình LED sắc nét.
@@ -118,7 +118,7 @@ export default function About() {
                     <div className="text-center mb-5">
                         <span className="badge rounded-pill px-3 py-2 about-badge">Giá trị cốt lõi</span>
                         <h2 className="fw-bold mt-3">Chúng tôi theo đuổi sự hoàn hảo</h2>
-                        <p className="text-muted">Từng chi tiết, từng phút giây – để ngày trọng đại trọn vẹn.</p>
+                        <p>Từng chi tiết, từng phút giây – để ngày trọng đại trọn vẹn.</p>
                     </div>
 
                     <div className="row g-4">
@@ -132,7 +132,7 @@ export default function About() {
                                 <div className="value-card rounded-4 p-4 h-100">
                                     <div className="icon-blob mb-3"><i className={`fas ${v.icon}`} /></div>
                                     <h5 className="fw-semibold mb-2">{v.title}</h5>
-                                    <p className="text-muted mb-0">{v.desc}</p>
+                                    <p className="mb-0">{v.desc}</p>
                                 </div>
                             </div>
                         ))}
@@ -168,7 +168,7 @@ export default function About() {
                                     </div>
                                     <div className="p-3 text-center bg-white">
                                         <h6 className="fw-bold mb-1">{m.name}</h6>
-                                        <small className="text-muted">{m.role}</small>
+                                        <small>{m.role}</small>
                                     </div>
                                 </div>
                             </div>

@@ -197,7 +197,8 @@ const Menu = () => {
           <h6>Chưa chọn phòng hoặc lịch!</h6>
           <p>Vui lòng chuyển sang trang Dịch vụ để chọn phòng và lịch trước khi thêm món.</p>
           <button
-            className="btn btn-sm btn-brand mt-2"
+            className="btn btn-sm mt-2"
+            style={{ backgroundColor: "#6f42c1", color: "white" }}
             onClick={() => {
               toast.dismiss(toastId);
               window.location.href = "/Service";
@@ -243,7 +244,8 @@ const Menu = () => {
           <p>Đã thêm món “{menu.name}”.</p>
           <div className="d-flex gap-2 mt-2">
             <button
-              className="btn btn-sm btn-brand"
+              className="btn btn-sm"
+              style={{ backgroundColor: "#6f42c1", color: "white" }}
               onClick={() => {
                 toast.dismiss(toastId);
                 window.location.href = "/cart-details";
@@ -251,7 +253,11 @@ const Menu = () => {
             >
               Xem giỏ hàng
             </button>
-            <button className="btn btn-sm btn-outline-secondary" onClick={() => toast.dismiss(toastId)}>
+            <button 
+              className="btn btn-sm btn-outline-secondary" 
+              onClick={() => toast.dismiss(toastId)}
+              style={{ borderColor: "#6f42c1", color: "#6f42c1" }}
+            >
               Tiếp tục đặt
             </button>
           </div>
@@ -316,11 +322,11 @@ const Menu = () => {
 
   return (
       <>
-        <div id="menu-content" className="container my-4">
+        <div id="menu-content" className="container my-4" style={{ backgroundColor: "#ffffff" }}>
           {/* Header */}
           <div className="menu-hero">
-            <div className="hero-badge">Thực đơn</div>
-            <h1>Chọn món ngon • Trải nghiệm mượt mà</h1>
+            <div className="hero-badge" style={{ backgroundColor: "#6f42c1", color: "white" }}>Thực đơn</div>
+            <h1 style={{ color: "#6f42c1" }}>Chọn món ngon • Trải nghiệm mượt mà</h1>
             <p className="hero-sub">Nguồn nguyên liệu tươi – giá minh bạch – đặt món trong vài giây.</p>
           </div>
 
@@ -339,6 +345,10 @@ const Menu = () => {
                       <button
                           key={cat.id}
                           className={`chip ${activeCategory === cat.id ? "chip--active" : ""}`}
+                          style={activeCategory === cat.id ? 
+                            { backgroundColor: "#6f42c1", color: "white" } : 
+                            { backgroundColor: "#e9ecef", color: "#6f42c1" }
+                          }
                           role="tab"
                           aria-selected={activeCategory === cat.id}
                           onClick={() => handleCategoryClick(cat.id)}
@@ -356,7 +366,7 @@ const Menu = () => {
           <div className="row g-2 align-items-center mb-3">
             <div className="col-12 col-md-7">
               <div className="searchbox">
-                <i className="fa fa-search searchbox__icon" aria-hidden="true" />
+                <i className="fa fa-search searchbox__icon" aria-hidden="true" style={{ color: "#6f42c1" }} />
                 <input
                     type="text"
                     className="form-control searchbox__input"
@@ -370,6 +380,7 @@ const Menu = () => {
                       setDebounceTimer(t);
                     }}
                     aria-label="Tìm món"
+                    style={{ borderColor: "#6f42c1" }}
                 />
                 {search && (
                     <button
@@ -380,19 +391,20 @@ const Menu = () => {
                           setSearchResults([]);
                         }}
                     >
-                      <i className="fa fa-times" aria-hidden="true" />
+                      <i className="fa fa-times" aria-hidden="true" style={{ color: "#6f42c1" }} />
                     </button>
                 )}
               </div>
             </div>
             <div className="col-12 col-md-5">
               <div className="sortbox">
-                <label htmlFor="sort" className="sortbox__label">Sắp xếp</label>
+                <label htmlFor="sort" className="sortbox__label" style={{ color: "#6f42c1" }}>Sắp xếp</label>
                 <select
                     id="sort"
                     className="form-select sortbox__select"
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
+                    style={{ borderColor: "#6f42c1" }}
                 >
                   <option value="popular">Mới nhất/Phổ biến</option>
                   <option value="price_asc">Giá tăng dần</option>
@@ -421,20 +433,24 @@ const Menu = () => {
                                     e.currentTarget.src = "https://dummyimage.com/800x450/eeeeee/bbb&text=No+Image";
                                   }}
                               />
-                              <span className="menu-card__price">{VND(item.price || 0)}</span>
+                              <span className="menu-card__price" style={{ backgroundColor: "#6f42c1", color: "white" }}>{VND(item.price || 0)}</span>
                             </div>
                             <div className="menu-card__body">
-                              <h3 className="menu-card__title" title={item.name}>{item.name}</h3>
+                              <h3 className="menu-card__title" title={item.name} style={{ color: "#6f42c1" }}>{item.name}</h3>
                               <p className="menu-card__desc" title={item.description}>
                                 {item.description || "Chưa có mô tả cho món này."}
                               </p>
                               <div className="d-flex justify-content-between align-items-center">
                                 <div className="menu-card__meta text-muted">
-                                  <i className="fa fa-folder-open me-1" aria-hidden="true" />
+                                  <i className="fa fa-folder-open me-1" aria-hidden="true" style={{ color: "#6f42c1" }} />
                                   <span>{getCategoryName(item.category_id) || "Danh mục"}</span>
                                 </div>
                                 <button
-                                    className="btn btn-brand btn-sm"
+                                    className="btn btn-sm"
+                                    style={cartItems.includes(item.id) ? 
+                                      { backgroundColor: "#28a745", color: "white" } : 
+                                      { backgroundColor: "#6f42c1", color: "white" }
+                                    }
                                     onClick={() => handleAddToCart(item)}
                                     aria-label={`Thêm ${item.name} vào giỏ`}
                                     disabled={addingId === item.id || cartItems.includes(item.id)}
@@ -464,8 +480,8 @@ const Menu = () => {
                 ) : (
                     <div className="col-12">
                       <div className="empty-state text-center">
-                        <i className="fa fa-search empty-state__icon" aria-hidden="true" />
-                        <h4>Không tìm thấy món phù hợp</h4>
+                        <i className="fa fa-search empty-state__icon" aria-hidden="true" style={{ color: "#6f42c1" }} />
+                        <h4 style={{ color: "#6f42c1" }}>Không tìm thấy món phù hợp</h4>
                         <p className="text-muted">Thử từ khoá khác (tối thiểu 2 ký tự).</p>
                       </div>
                     </div>
@@ -485,20 +501,24 @@ const Menu = () => {
                                 e.currentTarget.src = "https://dummyimage.com/800x450/eeeeee/bbb&text=No+Image";
                               }}
                           />
-                          <span className="menu-card__price">{VND(item.price || 0)}</span>
+                          <span className="menu-card__price" style={{ backgroundColor: "#6f42c1", color: "white" }}>{VND(item.price || 0)}</span>
                         </div>
                         <div className="menu-card__body">
-                          <h3 className="menu-card__title" title={item.name}>{item.name}</h3>
+                          <h3 className="menu-card__title" title={item.name} style={{ color: "#6f42c1" }}>{item.name}</h3>
                           <p className="menu-card__desc" title={item.description}>
                             {item.description || "Chưa có mô tả cho món này."}
                           </p>
                           <div className="d-flex justify-content-between align-items-center">
                             <div className="menu-card__meta text-muted">
-                              <i className="fa fa-cutlery me-1" aria-hidden="true" />
+                              <i className="fa fa-cutlery me-1" aria-hidden="true" style={{ color: "#6f42c1" }} />
                               <span>{getCategoryName(item.category_id) || "Danh mục"}</span>
                             </div>
                             <button
-                                className="btn btn-brand btn-sm"
+                                className="btn btn-sm"
+                                style={cartItems.includes(item.id) ? 
+                                  { backgroundColor: "#28a745", color: "white" } : 
+                                  { backgroundColor: "#6f42c1", color: "white" }
+                                }
                                 onClick={() => handleAddToCart(item)}
                                 aria-label={`Thêm ${item.name} vào giỏ`}
                                 disabled={addingId === item.id || cartItems.includes(item.id)}
@@ -528,8 +548,8 @@ const Menu = () => {
             ) : (
                 <div className="col-12">
                   <div className="empty-state text-center">
-                    <i className="fa fa-utensils empty-state__icon" aria-hidden="true" />
-                    <h4>Không có món trong danh mục</h4>
+                    <i className="fa fa-utensils empty-state__icon" aria-hidden="true" style={{ color: "#6f42c1" }} />
+                    <h4 style={{ color: "#6f42c1" }}>Không có món trong danh mục</h4>
                   </div>
                 </div>
             )}

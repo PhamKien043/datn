@@ -7,9 +7,8 @@ import {getUserFromStorage} from "../../../services/authService.js";
 import {ToastContainer, toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-
-
 import ServiceComments from "../Comment/ServiceComments.jsx";
+
 function ServiceDetail() {
     const {id} = useParams();
     const navigate = useNavigate();
@@ -48,7 +47,7 @@ function ServiceDetail() {
         return `${y}-${m}-${day}`;
     };
 
-// Lấy danh sách ngày, bắt đầu từ hôm nay + offset (mặc định 7 ngày)
+    // Lấy danh sách ngày, bắt đầu từ hôm nay + offset (mặc định 7 ngày)
     const getNextDays = (days = 30, offsetDays = MIN_OFFSET_DAYS) => {
         const dates = [];
         const start = new Date();
@@ -62,7 +61,6 @@ function ServiceDetail() {
         return dates;
     };
 
-
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleDateString("vi-VN", {weekday: "short", day: "2-digit", month: "2-digit"});
@@ -73,7 +71,6 @@ function ServiceDetail() {
 
     const getFilteredSlots = (roomId) =>
         roomSlots.filter((slot) => slot.room_id === roomId && slot.slot_date === selectedDate);
-
 
     const currentServiceCartCount = cartMenuIds.length;
     const totalSelectedCount = currentServiceCartCount + selectedMenus.length;
@@ -169,7 +166,6 @@ function ServiceDetail() {
         handleCloseRoomModal();
         handleCloseRoomDetailModal();
     };
-
 
     const handleAddToCart = async () => {
         if (!userId) {
@@ -272,7 +268,6 @@ function ServiceDetail() {
             toast.error(message);
         }
     };
-
 
     const handleCloseRoomModal = () => {
         setShowRoomModal(false);
@@ -480,14 +475,12 @@ function ServiceDetail() {
     if (!service) return <div className="text-center py-5">Đang tải dữ liệu...</div>;
 
     return (
-        <div className="container py-5">
+        <div className="container py-5" style={{ backgroundColor: "#ffffff" }}>
             <div className="mb-4">
                 <Link to="/Service" className="btn btn-outline-secondary rounded-pill px-4 shadow-sm">
                     <i className="fas fa-arrow-left me-2"></i> Quay lại
                 </Link>
             </div>
-
-
 
             <div className="row g-4">
                 {/* LEFT */}
@@ -500,30 +493,30 @@ function ServiceDetail() {
                             style={{maxHeight: 400, objectFit: "cover"}}
                         />
                         <div className="card-body p-4">
-                            <h2 className="fw-bold">{service.name}</h2>
+                            <h2 className="fw-bold" style={{ color: "#6f42c1" }}>{service.name}</h2>
                             <p className="text-muted">{service.description || "Không có mô tả."}</p>
                             {/* Steps */}
                             <ul className="nav nav-pills small mb-3 flex-wrap">
                                 <li className="nav-item me-2 mb-2">
-                  <span className="badge bg-primary-subtle text-primary px-3 py-2">
+                  <span className="badge px-3 py-2" style={{ backgroundColor: "#e9ecef", color: "#6f42c1" }}>
                     <i className="fas fa-map-marker-alt me-2"/>
                     1. Địa điểm & phòng
                   </span>
                                 </li>
                                 <li className="nav-item me-2 mb-2">
-                  <span className="badge bg-primary-subtle text-primary px-3 py-2">
+                  <span className="badge px-3 py-2" style={{ backgroundColor: "#e9ecef", color: "#6f42c1" }}>
                     <i className="fas fa-clock me-2"/>
                     2. Lịch
                   </span>
                                 </li>
                                 <li className="nav-item me-2 mb-2">
-                  <span className="badge bg-primary-subtle text-primary px-3 py-2">
+                  <span className="badge px-3 py-2" style={{ backgroundColor: "#e9ecef", color: "#6f42c1" }}>
                     <i className="fas fa-utensils me-2"/>
                     3. Chọn món
                   </span>
                                 </li>
                                 <li className="nav-item mb-2">
-                  <span className="badge bg-primary-subtle text-primary px-3 py-2">
+                  <span className="badge px-3 py-2" style={{ backgroundColor: "#e9ecef", color: "#6f42c1" }}>
                     <i className="fas fa-check-circle me-2"/>
                     4. Xác nhận
                   </span>
@@ -534,11 +527,13 @@ function ServiceDetail() {
 
                     {/* CHỌN MÓN ĂN */}
                     <div className="card mt-4 p-4 shadow-sm border-0 rounded-4">
-                        <h4 className="fw-semibold mb-3">Chọn món ăn</h4>
+                        <h4 className="fw-semibold mb-3" style={{ color: "#6f42c1" }}>Chọn món ăn</h4>
                         {/* Lưu ý tối thiểu */}
                         <div className="mb-3">
                             <div
-                                className="alert alert-primary border-0 rounded-4 shadow-sm d-flex align-items-center mb-2">
+                                className="alert border-0 rounded-4 shadow-sm d-flex align-items-center mb-2"
+                                style={{ backgroundColor: "#e9ecef", color: "#6f42c1" }}
+                            >
                                 <i className="fas fa-clipboard-list me-2 fs-5"></i>
                                 <span className="fw-semibold">
                                 Quý khách vui lòng chọn thực đơn <strong>tối thiểu 4 món mặn + 1 tráng miệng ({MIN_ITEMS_REQUIRED} món)</strong>
@@ -557,9 +552,15 @@ function ServiceDetail() {
                             {categories.map((cat) => (
                                 <li key={cat.id} className="nav-item me-2">
                                     <button
-                                        className={`d-flex py-2 px-4 border border-warning bg-white rounded-pill ${
-                                            activeCategory === cat.id ? "text-dark bg-warning" : "white"
+                                        className={`d-flex py-2 px-4 border rounded-pill ${
+                                            activeCategory === cat.id 
+                                                ? "text-white" 
+                                                : "text-dark bg-white"
                                         }`}
+                                        style={{ 
+                                            borderColor: "#6f42c1", 
+                                            backgroundColor: activeCategory === cat.id ? "#6f42c1" : "white" 
+                                        }}
                                         onClick={() => {
                                             setActiveCategory(cat.id);
                                             fetchMenus(cat.id);
@@ -572,7 +573,6 @@ function ServiceDetail() {
                         </ul>
 
                         {/* Danh sách menu */}
-                        {/* Danh sách menu */}
                         <div className="row row-cols-1 row-cols-md-2 g-3">
                             {menus.map((menu) => {
                                 const isSelected = selectedMenus.some((m) => m.id === menu.id);
@@ -582,7 +582,11 @@ function ServiceDetail() {
                                     <div key={menu.id} className="col">
                                         <div
                                             className={`card h-100 border ${
-                                                isSelected ? "border-primary bg-light" : isInCart ? "border-success bg-light" : ""
+                                                isSelected 
+                                                    ? "border-primary bg-light" 
+                                                    : isInCart 
+                                                        ? "border-success bg-light" 
+                                                        : ""
                                             }`}
                                         >
                                             <div className="d-flex align-items-center p-3">
@@ -608,8 +612,11 @@ function ServiceDetail() {
 
                                                 <button
                                                     className={`btn btn-sm rounded-circle ${
-                                                        isInCart || isSelected ? "btn-success" : "btn-outline-primary"
+                                                        isInCart || isSelected 
+                                                            ? "btn-success" 
+                                                            : "btn-outline-primary"
                                                     }`}
+                                                    style={isInCart || isSelected ? {} : { borderColor: "#6f42c1", color: "#6f42c1" }}
                                                     onClick={() => handleToggleMenu(menu)}
                                                     disabled={isInCart}
                                                     title={isInCart ? "Món này đã có trong giỏ hàng" : ""}
@@ -622,7 +629,6 @@ function ServiceDetail() {
                                 );
                             })}
                         </div>
-
                     </div>
                 </div>
 
@@ -632,7 +638,7 @@ function ServiceDetail() {
                         {/* Header gradient nổi bật */}
                         <div
                             className="p-3 p-md-4 text-white"
-                            style={{background: "rgba(207,164,96,0.85)"}}
+                            style={{background: "#6f42c1"}}
                         >
                             <h5 className="fw-semibold mb-1">
                                 <i className="fas fa-building me-2"></i> Chọn địa điểm & phòng
@@ -655,22 +661,22 @@ function ServiceDetail() {
                                                 <h6 className="fw-bold mb-0">Đã chọn phòng & lịch</h6>
                                             </div>
                                             <div className="mb-1">
-                                                <i className="fas fa-map-marker-alt text-primary me-2"></i>
+                                                <i className="fas fa-map-marker-alt me-2" style={{ color: "#6f42c1" }}></i>
                                                 <strong>Loại địa điểm:</strong>{" "}
                                                 {selectedRoomInfo.locationType?.name || "N/A"}
                                             </div>
                                             <div className="mb-1">
-                                                <i className="fas fa-door-open text-primary me-2"></i>
+                                                <i className="fas fa-door-open me-2" style={{ color: "#6f42c1" }}></i>
                                                 <strong>Phòng:</strong> {selectedRoomInfo.room.name}
                                             </div>
                                             {selectedRoomInfo.slot && selectedRoomInfo.date && selectedRoomInfo.timeSlot ? (
                                                 <>
                                                     <div className="mb-1">
-                                                        <i className="fas fa-calendar text-info me-2"></i>
+                                                        <i className="fas fa-calendar me-2" style={{ color: "#6f42c1" }}></i>
                                                         <strong>Ngày:</strong> {formatDate(selectedRoomInfo.date)}
                                                     </div>
                                                     <div className="mb-1">
-                                                        <i className="fas fa-clock text-info me-2"></i>
+                                                        <i className="fas fa-clock me-2" style={{ color: "#6f42c1" }}></i>
                                                         <strong>Giờ:</strong> {getTimeSlotLabel(selectedRoomInfo.timeSlot)}
                                                     </div>
                                                 </>
@@ -683,7 +689,7 @@ function ServiceDetail() {
                                                 </div>
                                             )}
                                             <div className="mt-2">
-                        <span className="text-primary fw-semibold">
+                        <span className="fw-semibold" style={{ color: "#6f42c1" }}>
                           <i className="fas fa-dollar-sign me-1"></i>
                             {new Intl.NumberFormat("vi-VN", {style: "currency", currency: "VND"}).format(
                                 selectedRoomInfo.room.price || 0
@@ -726,17 +732,26 @@ function ServiceDetail() {
                                                         className={`border rounded-4 p-3 d-flex align-items-start justify-content-between ${
                                                             isActive ? "border-primary shadow-sm" : "border-light"
                                                         }`}
-                                                        style={{ cursor: "pointer", transition: "transform .15s ease, box-shadow .15s ease" }}
+                                                        style={{ 
+                                                            cursor: "pointer", 
+                                                            transition: "transform .15s ease, box-shadow .15s ease",
+                                                            borderColor: isActive ? "#6f42c1" : "#dee2e6"
+                                                        }}
                                                     >
                                                         <div className="d-flex align-items-start">
                                                             <div
                                                                 className="me-3 rounded-circle d-flex align-items-center justify-content-center"
-                                                                style={{ width: 42, height: 42, background: isActive ? "#e9ecef" : "#f8f9fa" }}
+                                                                style={{ 
+                                                                    width: 42, 
+                                                                    height: 42, 
+                                                                    background: isActive ? "#e9ecef" : "#f8f9fa" 
+                                                                }}
                                                             >
-                                                                <i className={`fas fa-map-marker-alt ${isActive ? "text-primary" : "text-secondary"}`} />
+                                                                <i className={`fas fa-map-marker-alt ${isActive ? "" : "text-secondary"}`} 
+                                                                   style={{ color: isActive ? "#6f42c1" : "" }} />
                                                             </div>
                                                             <div>
-                                                                <div className="fw-semibold">{lt.name}</div>
+                                                                <div className="fw-semibold" style={{ color: "#6f42c1" }}>{lt.name}</div>
                                                                 <small className="text-muted">{lt.descriptions}</small>
                                                             </div>
                                                         </div>
@@ -747,7 +762,6 @@ function ServiceDetail() {
                                                 </div>
                                             );
                                         })}
-
                                     </div>
                                 </>
                             )}
@@ -757,8 +771,8 @@ function ServiceDetail() {
                     {/* Danh sách món mới chọn */}
                     {selectedMenus.length > 0 && (
                         <div className="card p-4 shadow-sm border-0 rounded-4">
-                            <h5 className="fw-semibold mb-3">
-                                <i className="fas fa-utensils text-warning me-2"></i>
+                            <h5 className="fw-semibold mb-3" style={{ color: "#6f42c1" }}>
+                                <i className="fas fa-utensils me-2" style={{ color: "#6f42c1" }}></i>
                                 Món ăn mới chọn ({selectedMenus.length})
                             </h5>
                             <div className="bg-opacity-10 rounded p-3 mb-3">
@@ -778,10 +792,10 @@ function ServiceDetail() {
                                                 <span className="small fw-medium">{m.name}</span>
                                             </div>
                                             <div className="d-flex align-items-center">
-                        <span className="badge bg-warning text-dark me-2">
+                        <span className="badge me-2" style={{ backgroundColor: "#e9ecef", color: "#6f42c1" }}>
                           <i className="fas fa-dollar-sign"></i>
                         </span>
-                                                <span className="small text-primary fw-semibold">
+                                                <span className="small fw-semibold" style={{ color: "#6f42c1" }}>
                           {new Intl.NumberFormat("vi-VN").format(m.price)}đ
                         </span>
                                             </div>
@@ -803,7 +817,8 @@ function ServiceDetail() {
                                 </div>
                             </div>
                             <button
-                                className="btn btn-primary w-100 rounded-pill"
+                                className="btn w-100 rounded-pill"
+                                style={{ backgroundColor: "#6f42c1", color: "white" }}
                                 onClick={handleAddToCart}
                                 disabled={!selectedRoomInfo || !selectedRoomInfo.slot || remainingToMin > 0}
                             >
@@ -813,20 +828,19 @@ function ServiceDetail() {
                                         ? `Cần chọn thêm ${remainingToMin} món (tối thiểu ${MIN_ITEMS_REQUIRED})`
                                         : "Thêm vào giỏ hàng"}
                             </button>
-
-
                         </div>
                     )}
                 </div>
             </div>
 
-            {/* Modal phòng */}{showRoomModal && (
+            {/* Modal phòng */}
+            {showRoomModal && (
             <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
                 <div className="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable modal-fullscreen-md-down">
                     <div className="modal-content" style={{ maxHeight: "90vh" }}>
                         {/* Header sticky */}
                         <div className="modal-header sticky-top bg-white" style={{ zIndex: 2 }}>
-                            <h5 className="modal-title">
+                            <h5 className="modal-title" style={{ color: "#6f42c1" }}>
                                 <i className="fas fa-door-open me-2"></i>
                                 Danh sách phòng - {selectedLocationTypeForModal?.name}
                             </h5>
@@ -838,8 +852,8 @@ function ServiceDetail() {
                             <div className="mb-4">
                                 <div className="card border-0 bg-light">
                                     <div className="card-body p-3">
-                                        <h6 className="fw-semibold mb-3">
-                                            <i className="fas fa-calendar-alt text-primary me-2"></i>
+                                        <h6 className="fw-semibold mb-3" style={{ color: "#6f42c1" }}>
+                                            <i className="fas fa-calendar-alt me-2"></i>
                                             Chọn ngày để xem lịch trống
                                         </h6>
                                         <div className="small text-muted mb-2">
@@ -850,7 +864,11 @@ function ServiceDetail() {
                                             {getNextDays(30, MIN_OFFSET_DAYS).map((date) => (
                                                 <button
                                                     key={date}
-                                                    className={`btn ${selectedDate === date ? "btn-primary" : "btn-outline-primary"} btn-sm rounded-pill flex-shrink-0`}
+                                                    className={`btn ${selectedDate === date ? "" : "btn-outline-primary"} btn-sm rounded-pill flex-shrink-0`}
+                                                    style={selectedDate === date ? 
+                                                        { backgroundColor: "#6f42c1", color: "white" } : 
+                                                        { borderColor: "#6f42c1", color: "#6f42c1" }
+                                                    }
                                                     onClick={() => setSelectedDate(date)}
                                                     title={date}
                                                 >
@@ -886,19 +904,19 @@ function ServiceDetail() {
                                                     </div>
 
                                                     <div className="card-body d-flex flex-column p-3">
-                                                        <h6 className="card-title fw-bold mb-2">{room.name}</h6>
+                                                        <h6 className="card-title fw-bold mb-2" style={{ color: "#6f42c1" }}>{room.name}</h6>
                                                         <div className="mb-3">
                                                             <p className="card-text text-muted small mb-1">
                                                                 <i className="fas fa-users me-1"></i> {room.capacity} người
                                                             </p>
-                                                            <p className="card-text text-primary fw-semibold mb-0">
+                                                            <p className="card-text fw-semibold mb-0" style={{ color: "#6f42c1" }}>
                                                                 {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(room.price || 0)}
                                                             </p>
                                                         </div>
 
                                                         <div className="mb-3 flex-grow-1">
-                                                            <h6 className="fw-semibold mb-2 small">
-                                                                <i className="fas fa-clock text-primary me-1"></i>
+                                                            <h6 className="fw-semibold mb-2 small" style={{ color: "#6f42c1" }}>
+                                                                <i className="fas fa-clock me-1"></i>
                                                                 Lịch ngày {formatDate(selectedDate)}:
                                                             </h6>
 
@@ -909,8 +927,12 @@ function ServiceDetail() {
                                                                             <span className="small">{getTimeSlotLabel(slot.time_slot)}</span>
                                                                             <button
                                                                                 className={`btn btn-sm ${slot.is_available ? "btn-success" : "btn-danger"} ${
-                                                                                    selectedSlot?.id === slot.id ? "btn-primary" : ""
+                                                                                    selectedSlot?.id === slot.id ? "" : ""
                                                                                 }`}
+                                                                                style={selectedSlot?.id === slot.id ? 
+                                                                                    { backgroundColor: "#6f42c1", borderColor: "#6f42c1" } : 
+                                                                                    {}
+                                                                                }
                                                                                 onClick={() => slot.is_available && setSelectedSlot({ ...slot, room })}
                                                                                 disabled={!slot.is_available}
                                                                             >
@@ -932,12 +954,14 @@ function ServiceDetail() {
                                                         <div className="mt-auto d-flex gap-2">
                                                             <button
                                                                 className="btn btn-outline-primary btn-sm flex-grow-1"
+                                                                style={{ borderColor: "#6f42c1", color: "#6f42c1" }}
                                                                 onClick={() => handleShowRoomDetail(room)}
                                                             >
                                                                 <i className="fas fa-info-circle me-1"></i> Chi tiết
                                                             </button>
                                                             <button
                                                                 className="btn btn-primary btn-sm flex-grow-1"
+                                                                style={{ backgroundColor: "#6f42c1", borderColor: "#6f42c1" }}
                                                                 onClick={() => handleSelectSlot(selectedSlot, room)}
                                                                 disabled={
                                                                     room.status !== "available" ||
@@ -965,7 +989,12 @@ function ServiceDetail() {
 
                         {/* Footer sticky */}
                         <div className="modal-footer bg-white" style={{ position: "sticky", bottom: 0, zIndex: 2 }}>
-                            <button type="button" className="btn btn-secondary rounded-pill px-4" onClick={handleCloseRoomModal}>
+                            <button 
+                                type="button" 
+                                className="btn btn-secondary rounded-pill px-4" 
+                                onClick={handleCloseRoomModal}
+                                style={{ backgroundColor: "#6f42c1", borderColor: "#6f42c1" }}
+                            >
                                 <i className="fas fa-times me-2"></i>Đóng
                             </button>
                         </div>
@@ -974,7 +1003,6 @@ function ServiceDetail() {
             </div>
         )}
 
-
             {/* Modal chi tiết phòng */}
             {showRoomDetailModal && selectedRoomDetail && (
                 <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
@@ -982,7 +1010,7 @@ function ServiceDetail() {
                         <div className="modal-content" style={{ maxHeight: "90vh" }}>
                             {/* Header sticky */}
                             <div className="modal-header sticky-top bg-white" style={{ zIndex: 2 }}>
-                                <h5 className="modal-title">Chi tiết phòng - {selectedRoomDetail.name}</h5>
+                                <h5 className="modal-title" style={{ color: "#6f42c1" }}>Chi tiết phòng - {selectedRoomDetail.name}</h5>
                                 <button type="button" className="btn-close" onClick={handleCloseRoomDetailModal}></button>
                             </div>
 
@@ -999,26 +1027,26 @@ function ServiceDetail() {
                                     </div>
 
                                     <div className="col-md-6">
-                                        <h4 className="mb-3 fw-bold">{selectedRoomDetail.name}</h4>
+                                        <h4 className="mb-3 fw-bold" style={{ color: "#6f42c1" }}>{selectedRoomDetail.name}</h4>
 
                                         <div className="mb-3">
                                             <p className="mb-2">
                                                 <strong>
-                                                    <i className="fas fa-map-marker-alt text-primary me-2"></i>Loại phòng:
+                                                    <i className="fas fa-map-marker-alt me-2" style={{ color: "#6f42c1" }}></i>Loại phòng:
                                                 </strong>
                                                 <span className="ms-1">{selectedLocationTypeForModal?.name}</span>
                                             </p>
                                             <p className="mb-2">
                                                 <strong>
-                                                    <i className="fas fa-users text-primary me-2"></i>Sức chứa:
+                                                    <i className="fas fa-users me-2" style={{ color: "#6f42c1" }}></i>Sức chứa:
                                                 </strong>
                                                 <span className="ms-1">{selectedRoomDetail.capacity} người</span>
                                             </p>
                                             <p className="mb-2">
                                                 <strong>
-                                                    <i className="fas fa-dollar-sign text-primary me-2"></i>Giá phòng:
+                                                    <i className="fas fa-dollar-sign me-2" style={{ color: "#6f42c1" }}></i>Giá phòng:
                                                 </strong>
-                                                <span className="text-primary fw-semibold ms-1">
+                                                <span className="fw-semibold ms-1" style={{ color: "#6f42c1" }}>
                     {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
                         selectedRoomDetail.price || 0
                     )}
@@ -1026,7 +1054,7 @@ function ServiceDetail() {
                                             </p>
                                             <p className="mb-3">
                                                 <strong>
-                                                    <i className="fas fa-info-circle text-primary me-2"></i>Trạng thái:
+                                                    <i className="fas fa-info-circle me-2" style={{ color: "#6f42c1" }}></i>Trạng thái:
                                                 </strong>{" "}
                                                 <span className={selectedRoomDetail.status === "available" ? "badge bg-success" : "badge bg-danger"}>
                     {selectedRoomDetail.status === "available" ? "✅ Còn trống" : "❌ Đã đặt"}
@@ -1037,7 +1065,7 @@ function ServiceDetail() {
                                         {selectedRoomDetail.description && (
                                             <div className="mb-3">
                                                 <strong>
-                                                    <i className="fas fa-file-alt text-primary me-2"></i>Mô tả:
+                                                    <i className="fas fa-file-alt me-2" style={{ color: "#6f42c1" }}></i>Mô tả:
                                                 </strong>
                                                 <div className="mt-2 p-3 bg-light rounded">
                                                     {selectedRoomDetail.description.split("\n").map((line, idx) => (
@@ -1051,7 +1079,7 @@ function ServiceDetail() {
 
                                         <div className="mb-3">
                                             <strong>
-                                                <i className="fas fa-calendar-week text-primary me-2"></i>Chọn lịch ngày {formatDate(selectedDate)}:
+                                                <i className="fas fa-calendar-week me-2" style={{ color: "#6f42c1" }}></i>Chọn lịch ngày {formatDate(selectedDate)}:
                                             </strong>
                                             <div className="mt-2">
                                                 {getFilteredSlots(selectedRoomDetail.id).length > 0 ? (
@@ -1061,8 +1089,12 @@ function ServiceDetail() {
                                                                 <span className="small">{getTimeSlotLabel(slot.time_slot)}</span>
                                                                 <button
                                                                     className={`btn btn-sm ${slot.is_available ? "btn-success" : "btn-danger"} ${
-                                                                        selectedSlot?.id === slot.id ? "btn-primary" : ""
+                                                                        selectedSlot?.id === slot.id ? "" : ""
                                                                     }`}
+                                                                    style={selectedSlot?.id === slot.id ? 
+                                                                        { backgroundColor: "#6f42c1", borderColor: "#6f42c1" } : 
+                                                                        {}
+                                                                    }
                                                                     onClick={() => slot.is_available && setSelectedSlot({ ...slot, room: selectedRoomDetail })}
                                                                     disabled={!slot.is_available}
                                                                 >
@@ -1091,12 +1123,14 @@ function ServiceDetail() {
                                     type="button"
                                     className="btn btn-secondary rounded-pill px-4"
                                     onClick={handleCloseRoomDetailModal}
+                                    style={{ backgroundColor: "#6f42c1", borderColor: "#6f42c1" }}
                                 >
                                     <i className="fas fa-times me-1"></i> Đóng
                                 </button>
                                 <button
                                     type="button"
                                     className="btn btn-primary rounded-pill px-4"
+                                    style={{ backgroundColor: "#6f42c1", borderColor: "#6f42c1" }}
                                     onClick={() => {
                                         handleSelectSlot(selectedSlot, selectedRoomDetail);
                                         handleCloseRoomDetailModal();
@@ -1115,7 +1149,6 @@ function ServiceDetail() {
                     </div>
                 </div>
             )}
-
 
             <ServiceComments serviceId={id} currentUser={currentUser} />
             <ToastContainer position="bottom-right"/>

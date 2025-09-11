@@ -33,6 +33,8 @@ use App\Http\Controllers\Api\EmailController;
 use App\Http\Controllers\Api\VoucherController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+// thực  hiện chức năng hủy đơn hàng
+use App\Http\Controllers\Api\WithdrawRequestController;
 
 
 // routes/web.php (hoặc api.php nếu đang phục vụ qua /api)
@@ -78,6 +80,7 @@ Route::prefix('admin')->group(function () {
     Route::post('/blog/check-name', [BlogAdminController::class, 'checkTitle']);
 });
 
+//Email
 //Email
 Route::prefix('admin')->group(function () {
     Route::get('/email', [EmailAdminController::class, 'index']);
@@ -214,7 +217,21 @@ Route::get('/menus1', [PaymentController::class, 'getMenus']);
 Route::get('/rooms1', [PaymentController::class, 'getRooms']);
 
 //end phần Thanh Trúc
+// Hủy đơn hàng
+// Khách hàng gửi yêu cầu hủy đơn
+Route::post('/orders/{id}/request-cancel', [WithdrawRequestController::class, 'requestCancel']);
 
+// Admin xác nhận đã chuyển tiền (Bước 1)
+Route::put('/admin/orders/{id}/process-refund', [WithdrawRequestController::class, 'processRefund']);
+
+// Admin xác nhận hủy hoàn tất (Bước 2)
+Route::put('/admin/orders/{id}/confirm-cancel', [WithdrawRequestController::class, 'confirmCancel']);
+
+// Admin xem danh sách yêu cầu hủy
+Route::get('/admin/withdraw-requests', [WithdrawRequestController::class, 'index']);
+
+// Admin lấy thông tin yêu cầu hủy theo order_id
+Route::get('/admin/withdraw-requests/order/{orderId}', [WithdrawRequestController::class, 'getByOrder']);
 
 
 ///////////////////////////////// Phần Trì ///////////////////////////////////////////////
@@ -248,11 +265,11 @@ Route::apiResource('/users', UserController::class);
 
 Route::get('/users/check-unique', [UserController::class, 'checkUnique']);
 
-
 Route::get('/comments', [CommentController::class, 'index']);
-Route::put('/comments/{id}/status', [CommentController::class, 'updateStatus']);
-Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
 Route::post('/comments', [CommentController::class, 'store']);
+Route::put('/comments/{id}', [CommentController::class, 'update']);
+Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
+Route::put('/comments/{id}/status', [CommentController::class, 'updateStatus']);
 
 
 Route::prefix('statistics')->controller(StatisticController::class)->group(function () {
@@ -278,6 +295,12 @@ Route::prefix('statistics')->controller(StatisticController::class)->group(funct
     // Gần đây
     Route::get('/recent-orders', 'recentOrders');
     Route::get('/recent-activities', 'recentActivities');
+
+
+    // Thống kê đơn hàng theo trạng thái
+    Route::get('/order-status-ratio', 'orderStatusRatio');
+    Route::get('/top-customers', 'topCustomers');
+
 });
 
 

@@ -14,6 +14,13 @@ const AddUser = () => {
     password: "",
     role: 1, // default User
     status: true,
+    phone: null,
+    avatar: null,
+    address: null,
+    google_id: null,
+    provider: null,
+    provider_id: null
+
   });
   const [errors, setErrors] = useState({});
 

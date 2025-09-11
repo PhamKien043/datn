@@ -20,7 +20,7 @@ class StatisticController extends Controller
     public function overview()
     {
         $totalOrders = Order::count();
-        $totalRevenue = Order::whereIn('status', ['confirmed', 'completed'])->sum('total_amount');
+        $totalRevenue = Order::whereIn('status', [ 'completed'])->sum('total_amount');
         $ordersByStatus = Order::select('status', DB::raw('count(*) as total'))
             ->groupBy('status')
             ->pluck('total', 'status');
@@ -36,7 +36,7 @@ class StatisticController extends Controller
     public function totalRevenue()
     {
         $revenue = OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')
-            ->whereIn('orders.status', ['confirmed', 'completed'])
+            ->whereIn('orders.status', ['completed'])
             ->sum(DB::raw('COALESCE(order_details.quantity, 0) * COALESCE(order_details.price, 0)'));
 
         $total = $revenue;
@@ -53,7 +53,7 @@ class StatisticController extends Controller
     // 4. Doanh thu theo ngày
     public function revenueByDate()
     {
-        $revenue = Order::whereIn('status', ['confirmed', 'completed'])
+        $revenue = Order::whereIn('status', [ 'completed'])
             ->select(DB::raw('DATE(date) as date'), DB::raw('SUM(total_amount) as total'))
             ->groupBy(DB::raw('DATE(date)'))
             ->orderBy('date', 'desc')
@@ -67,7 +67,7 @@ class StatisticController extends Controller
     {
         $year = now()->year;
 
-        $monthly = Order::whereIn('status', ['confirmed', 'completed'])
+        $monthly = Order::whereIn('status', [ 'completed'])
             ->whereYear('date', $year)
             ->select(DB::raw('MONTH(date) as month'), DB::raw('SUM(total_amount) as total'))
             ->groupBy(DB::raw('MONTH(date)'))
@@ -99,14 +99,21 @@ class StatisticController extends Controller
         $top = OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')
             ->join('rooms', 'order_details.room_id', '=', 'rooms.id')
             ->whereIn('orders.status', ['confirmed', 'completed'])
-            ->select('rooms.name', DB::raw('COUNT(order_details.id) as total'))
-            ->groupBy('rooms.name')
-            ->orderByDesc('total')
+            ->select(
+                'rooms.id',
+                'rooms.name',
+                DB::raw('COUNT(DISTINCT order_details.order_id, order_details.room_id) as booking_count')
+                // đếm số đơn hàng mà phòng đó xuất hiện (không tính nhiều lần trong cùng đơn)
+            )
+            ->groupBy('rooms.id', 'rooms.name')
+            ->orderByDesc('booking_count')
             ->limit(5)
             ->get();
 
         return response()->json($top);
     }
+
+
 
     // 8. Menu được đặt nhiều nhất
     public function topMenus()
@@ -211,7 +218,16 @@ class StatisticController extends Controller
                 'date' => $order->date,
                 'time' => $order->time,
                 'services' => $order->details->pluck('service.name')->filter()->unique()->values(),
-                'menus' => $order->details->pluck('menu.name')->filter()->unique()->values(),
+                'menus' => $order->details
+                    ->whereNotNull('menu')
+                    ->groupBy('menu_id')
+                    ->map(function ($group) {
+                        $menuName = $group->first()->menu->name;
+                        $quantity = $group->sum('quantity');
+                        return $quantity > 1 ? "{$menuName} (x{$quantity})" : $menuName;
+                    })
+                    ->values(),
+
                 'rooms' => $order->details->pluck('room.name')->filter()->unique()->values(),
             ];
         });
@@ -265,5 +281,71 @@ class StatisticController extends Controller
         })->values();
 
         return response()->json($result);
+    }
+
+    // 14. Tỉ lệ đơn hàng theo trạng thái
+    public function orderStatusRatio()
+    {
+        // Lấy số lượng đơn hàng theo từng trạng thái
+        $statusCounts = Order::select('status', DB::raw('COUNT(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        // Mapping sang cấu trúc hiển thị (theo STATUS_META)
+        $statusMeta = [
+            'pending'          => ['text' => 'Chờ xác nhận',                'badge' => 'warning'],
+            'deposit_paid'     => ['text' => 'Đã đặt cọc 30%',              'badge' => 'info'],
+            'confirmed'        => ['text' => 'Đã xác nhận & chờ thực hiện', 'badge' => 'primary'],
+            'awaiting_balance' => ['text' => 'Chờ thanh toán 70%',          'badge' => 'warning'],
+            'completed'        => ['text' => 'Dịch vụ hoàn tất',            'badge' => 'success'],
+            'failed'           => ['text' => 'Thanh toán thất bại',         'badge' => 'danger'],
+            'cancelled'        => ['text' => 'Đã hủy',                      'badge' => 'secondary'],
+        ];
+
+        // Tổng số đơn để tính phần trăm
+        $totalOrders = $statusCounts->sum();
+
+        // Format dữ liệu trả về
+        $result = [];
+        foreach ($statusMeta as $key => $meta) {
+            $count = $statusCounts[$key] ?? 0;
+            $percentage = $totalOrders > 0 ? round(($count / $totalOrders) * 100, 2) : 0;
+
+            $result[] = [
+                'status'     => $key,
+                'text'       => $meta['text'],
+                'badge'      => $meta['badge'],
+                'count'      => $count,
+                'percentage' => $percentage,
+            ];
+        }
+
+        return response()->json([
+            'total_orders' => $totalOrders,
+            'data' => $result
+        ]);
+    }
+
+    public function topCustomers(Request $request)
+    {
+        $limit = $request->get('limit', 5);
+
+        $topCustomers = User::select(
+            'users.id',
+            'users.name',
+            DB::raw('COUNT(orders.id) as total_orders'),
+            DB::raw('SUM(orders.total_amount) as total_revenue')
+        )
+            ->join('orders', 'users.id', '=', 'orders.user_id')
+            ->where('users.role', '1') // Chỉ khách hàng
+            ->where('orders.status', 'completed') // Chỉ đơn hoàn tất
+            ->groupBy('users.id', 'users.name')
+            ->orderByDesc('total_orders') // hoặc ->orderByDesc('total_revenue')
+            ->limit($limit)
+            ->get();
+
+        return response()->json([
+            'top_customers' => $topCustomers,
+        ]);
     }
 }

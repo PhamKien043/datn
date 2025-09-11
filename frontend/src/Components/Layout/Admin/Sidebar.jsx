@@ -56,6 +56,7 @@ const Sidebar = () => {
                     {/* Sidebar Menu */}
                     <nav className="mt-2">
                         <ul className="nav nav-pills nav-sidebar flex-column">
+                            <SidebarItem to="/admin" icon="bi-clock-history" label="Thông kê" isActive={location.pathname === "/admin"} />
                             <SidebarItem to="/admin/history" icon="bi-clock-history" label="Quản lý đơn hàng" isActive={location.pathname === "/admin/history"} />
                             <SidebarItem
                                 to="/admin/emails"

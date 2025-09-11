@@ -13,7 +13,7 @@ function AddMenu() {
     description: "",
     price: "",
     status: true,
-    type: "",
+    type: "null",
     is_chay: false,
     category_id: "",
   });
@@ -274,7 +274,7 @@ function AddMenu() {
         </div>
 
         <div className="form-section">
-          <div className="form-group">
+          {/* <div className="form-group">
             <label htmlFor="type">
               Loại menu <span className="required">*</span>
             </label>
@@ -296,7 +296,7 @@ function AddMenu() {
                 <i className="icon-error">⚠️</i> {errors.type}
               </span>
             )}
-          </div>
+          </div> */}
 
           <div className="form-group">
             <label htmlFor="category_id">

@@ -13,15 +13,20 @@ function EditMenu() {
     description: "",
     price: "",
     status: true,
-    type: "",
+    type: "null",
     is_chay: false,
     category_id: "",
+    image: null, // ảnh mới
   });
+  const [oldImage, setOldImage] = useState(null); // ảnh cũ từ server
+  const [preview, setPreview] = useState(null); // preview ảnh mới
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [errors, setErrors] = useState({});
   const [checkingName, setCheckingName] = useState(false);
   const [nameValid, setNameValid] = useState(null);
+
+ const API_URL = "http://localhost:8000";
 
   useEffect(() => {
     fetchMenu();
@@ -40,7 +45,12 @@ function EditMenu() {
         type: data.type || "",
         is_chay: data.is_chay !== undefined ? !!data.is_chay : false,
         category_id: data.category_id ? String(data.category_id) : "",
+        image: null,
       });
+      setOldImage(data.image 
+        ? `${API_URL}/storage/menus/${data.image}`
+          : "https://via.placeholder.com/150x100?text=Không+có+ảnh"
+      );
       setNameValid(true);
       setErrors({});
     } catch (error) {
@@ -63,7 +73,17 @@ function EditMenu() {
   };
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type, checked, files } = e.target;
+    if (name === "image") {
+      const file = files[0];
+      setForm((prev) => ({ ...prev, image: file }));
+      if (file) {
+        setPreview(URL.createObjectURL(file));
+      } else {
+        setPreview(null);
+      }
+      return;
+    }
     setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
     if (name === "name") setNameValid(null);
     else if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
@@ -142,6 +162,10 @@ function EditMenu() {
         formData.append(key, value);
       }
 
+      if (form.image) {
+        formData.append("image", form.image);
+      }
+
       formData.append("_method", "PUT");
       await updateMenu(id, formData);
       alert("Cập nhật menu thành công!");
@@ -182,7 +206,7 @@ function EditMenu() {
               <input type="number" id="price" name="price" min="0" value={form.price} onChange={handleChange} placeholder="Nhập giá" className={errors.price ? "error-input" : ""} />
               {errors.price && <span className="error-message">⚠️ {errors.price}</span>}
             </div>
-
+{/* 
             <div className="form-group">
               <label htmlFor="type">Loại menu <span className="required">*</span></label>
               <select id="type" name="type" value={form.type} onChange={handleChange} className={errors.type ? "error-input" : ""}>
@@ -192,8 +216,9 @@ function EditMenu() {
                 <option value="drink">Đồ uống</option>
               </select>
               {errors.type && <span className="error-message">⚠️ {errors.type}</span>}
-            </div>
-          </div>
+            </div> */}
+
+         
 
           <div className="form-column">
             <div className="form-group">
@@ -221,7 +246,24 @@ function EditMenu() {
               </label>
             </div>
           </div>
-        </div>
+        </div> 
+          <div className="form-group">
+              <label htmlFor="image">Ảnh menu</label>
+              <input type="file" id="image" name="image" accept="image/*" onChange={handleChange} />
+              {oldImage && !preview && (
+                <div className="image-preview">
+                  <p>Ảnh hiện tại:</p>
+                  <img src={oldImage} alt="Menu hiện tại" height="100" />
+                </div>
+              )}
+              {preview && (
+                <div className="image-preview">
+                  <p>Ảnh mới:</p>
+                  <img src={preview} alt="Xem trước ảnh" height="100" />
+                </div>
+              )}
+            </div>
+          </div>
 
         <div className="form-actions">
           <button type="submit" className="btn-submit" disabled={loading || checkingName || nameValid === false}>

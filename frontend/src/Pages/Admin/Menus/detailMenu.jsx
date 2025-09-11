@@ -73,10 +73,10 @@ function DetailMenu() {
             <p className="price">{Number(menu.price).toLocaleString("vi-VN")} VND</p>
           </div>
 
-          <div className="info-item">
+          {/* <div className="info-item">
             <label>Loại:</label>
             <p>{menu.type || "Không xác định"}</p>
-          </div>
+          </div> */}
 
           <div className="info-item">
             <label>Chay:</label>
@@ -88,10 +88,10 @@ function DetailMenu() {
             <p>{menu.category?.name || "Không có danh mục"}</p>
           </div>
 
-          <div className="info-item">
+          {/* <div className="info-item">
             <label>Ngày tạo:</label>
             <p>{new Date(menu.created_at).toLocaleDateString()}</p>
-          </div>
+          </div> */}
         </div>
 
         <div className="detail-menu-buttons">

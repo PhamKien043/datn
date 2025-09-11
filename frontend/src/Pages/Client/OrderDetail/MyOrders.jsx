@@ -12,6 +12,8 @@ const STATUS_META = {
     completed:        { text: 'Dịch vụ hoàn tất',             badge: 'success'  },
     failed:           { text: 'Thanh toán thất bại',          badge: 'danger'   },
     cancelled:        { text: 'Đã hủy',                       badge: 'secondary'},
+    cancel_requested: { text: 'Chờ xác nhận hủy',             badge: 'warning'  },
+    cancelled_confirmed: { text: 'Hủy đơn thành công',        badge: 'success'  },
 };
 
 // Fallback cho vài trạng thái cũ nếu BE từng trả
@@ -313,6 +315,26 @@ function MyOrders() {
                                         >
                                             Xem chi tiết
                                         </button>
+
+                                        {(order.status === 'pending' || order.status === 'deposit_paid') && (
+                                            <button
+                                                onClick={() => navigate(`/orders/${order.id}/cancel`)}
+                                                style={{
+                                                    marginLeft: '0.5rem',
+                                                    padding: '0.375rem 0.75rem',
+                                                    backgroundColor: '#dc3545',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '4px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.875rem',
+                                                }}
+                                                onMouseOver={(e) => (e.target.style.backgroundColor = '#a71d2a')}
+                                                onMouseOut={(e) => (e.target.style.backgroundColor = '#dc3545')}
+                                            >
+                                                Hủy đơn
+                                            </button>
+                                        )}
                                     </td>
                                 </tr>
                             );

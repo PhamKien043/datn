@@ -11,6 +11,7 @@ function MenusList() {
   const [searchName, setSearchName] = useState("");
   const [searchPrice, setSearchPrice] = useState("");
   const navigate = useNavigate();
+  const limit = 5; // số bản ghi mỗi trang
 
   useEffect(() => {
     fetchMenus();
@@ -21,7 +22,7 @@ function MenusList() {
     try {
       const params = { 
         page, 
-        limit: 5,
+        limit,
         name: searchName, 
         price: searchPrice 
       };
@@ -144,7 +145,7 @@ function MenusList() {
           <table className="menus-table">
             <thead>
               <tr>
-                <th>ID</th>
+                <th>STT</th>
                 <th>Hình ảnh</th>
                 <th>Tên</th>
                 <th>Giá</th>
@@ -154,9 +155,11 @@ function MenusList() {
               </tr>
             </thead>
             <tbody>
-              {menus.map((menu) => (
+              {menus.map((menu, index) => (
                 <tr key={menu.id}>
-                  <td>{menu.id}</td>
+                  {/* STT tính theo trang */}
+                  <td>{(page - 1) * limit + index + 1}</td>
+                  
                   <td>
                     {menu.image ? (
                       <img
@@ -184,19 +187,19 @@ function MenusList() {
                         className="btn-view"
                         onClick={() => navigate(`/admin/menus/detail/${menu.id}`)}
                       >
-                        👁 Xem
+                        👁️ Xem
                       </button>
                       <button
                         className="btn-edit"
                         onClick={() => navigate(`/admin/menus/edit/${menu.id}`)}
                       >
-                        ✏ Sửa
+                        ✏️ Sửa
                       </button>
                       <button
                         className="btn-delete"
                         onClick={() => handleDelete(menu.id)}
                       >
-                        🗑 Xóa
+                        🗑️ Xóa
                       </button>
                     </div>
                   </td>

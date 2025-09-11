@@ -28,6 +28,7 @@ import OrderDetails from "./Pages/Client/OrderDetail/OrderDetails.jsx";
 import OrderDetailAdmin from "./Pages/Admin/History/EditOrder.jsx";
 import Blog from "./Pages/Client/Blog";
 import BlogDetail from "./Pages/Client/Blog/detail.jsx";
+import CancelOrderPage from "./Pages/Client/OrderDetail/CancelOrderPage.jsx";
 
 import ForgotPassword from "./Pages/Client/ForgotPassword";
 import ResetPassword from "./Pages/Client/ResetPassword";
@@ -54,11 +55,14 @@ import BlogList from "./Pages/Admin/Blog";
 import AddBlog from "./Pages/Admin/Blog/addBlog";
 import EditBlog from "./Pages/Admin/Blog/editBlog";
 import DetailBlog from "./Pages/Admin/Blog/DetailBlog.jsx";
-
+// admin comment
+import CommentAdmin from "./Pages/Admin/Comment/index.jsx"
 
 // email
 import EmailList from "./Pages/Admin/Email";
 import EmailDetail from "./Pages/Admin/Email/Detail.jsx";
+
+import WithdrawRequestsAdmin from "./Pages/Admin/History/WithdrawRequestsAdmin.jsx";
 
 import AddMenu from "./Pages/Admin/Menus/addMenu.jsx";
 import MenusList from "./Pages/Admin/Menus/index.jsx";
@@ -127,7 +131,7 @@ function App() {
                     {/* Admin Routes */}
                     {/*<Route path="/admin" element={<AdminLayout />}>*/}
                     <Route index element={<HomepagesAdmin />} />
-                    <Route path="dashboard" element={<Dashboard />} />
+                     <Route path="dashboard" element={<Dashboard />} />
 
                     {/* Các route quản lý danh mục */}
                     <Route path="category" element={<CategoryAdmin />} />
@@ -183,7 +187,9 @@ function App() {
                     {/* Email */}
                     <Route path="emails" element={<EmailList />} />
                     <Route path="email/:id" element={<EmailDetail />} />
-
+                    <Route path="withdraw-requests" element={<WithdrawRequestsAdmin />} />
+                    {/* Admin comment */}
+                    <Route path="comments" element={<CommentAdmin />} />
                 </Route>
 
                 {/* Client Routes */}
@@ -201,6 +207,7 @@ function App() {
                     <Route path="Checkout" element={<Checkout />} />
                     <Route path="my-orders" element={<MyOrders />} />
                     <Route path="orders/:orderId" element={<OrderDetails />} />
+                    <Route path="/orders/:id/cancel" element={<CancelOrderPage />} />
 
                     <Route path="blogs" element={<Blog />} />
                     <Route path="blog/:id" element={<BlogDetail />} />

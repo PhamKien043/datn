@@ -34,6 +34,15 @@ export const postComment = async (data) => {
   }
 };
 
+export const updateComment = async (id, data) => {
+  try {
+    const response = await axios.put(`/comments/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi updateComment:", error);
+    throw error;
+  }
+};
 // Xóa bình luận
 export const deleteComment = async (id) => {
   try {

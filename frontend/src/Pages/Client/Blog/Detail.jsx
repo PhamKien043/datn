@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "./blog.scss"; // dùng lại style từ blog.scss
 
 function BlogDetail() {
   const { id } = useParams(); // lấy id từ URL
@@ -30,13 +31,20 @@ function BlogDetail() {
   if (!blog) return <p className="text-center">⚠️ Không tìm thấy bài viết</p>;
 
   return (
-    <div className="container py-5">
-      <button className="btn btn-dark mb-3" onClick={() => navigate("/Blogs")} style={{ float: "right" }}>
+    <div className="container py-5 blog-section">
+      {/* nút quay lại */}
+      <button
+        className="btn btn-primary mb-3"
+        onClick={() => navigate("/blogs")}
+        style={{ float: "right" }}
+      >
         ← Quay lại
       </button>
 
-      <h1 className="mb-4">{blog.title}</h1>
+      {/* tiêu đề */}
+      <h1 className="mb-4 section-title">{blog.title}</h1>
 
+      {/* ảnh */}
       {blog.image && (
         <img
           src={`http://localhost:8000/storage/blogs/${blog.image}`}
@@ -46,10 +54,10 @@ function BlogDetail() {
         />
       )}
 
+      {/* nội dung */}
       <div
         className="blog-content"
         dangerouslySetInnerHTML={{ __html: blog.content }}
-        style={{ fontSize: "20px", color: "black" }}
       />
     </div>
   );

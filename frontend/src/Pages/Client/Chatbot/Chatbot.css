@@ -1,12 +1,12 @@
 :root{
-    --brand: #d4a762;           /* vàng chủ đạo */
-    --brand-2: #c99a50;
+    --brand: #5a3fc0;         /* xanh tím chủ đạo */
+    --brand-2: #4c36a5;
     --bg: #ffffff;
     --text: #111827;
     --muted: #6b7280;
     --line: #eceff3;
-    --bubble: #f6f7f9;          /* bubble bot */
-    --user-bubble: #dff6ff;     /* bubble user gần màu ảnh mẫu */
+    --bubble: #f6f7f9;
+    --user-bubble: #e8e0ff;
     --shadow: 0 14px 38px rgba(0,0,0,.18), 0 6px 12px rgba(0,0,0,.06);
 }
 
@@ -92,9 +92,9 @@
 }
 .msg-row.right .msg-bubble{
     background: var(--user-bubble);
-    border-color: #cdeaf6;
+    border-color: #cfc2ff;
 }
-.msg-bubble a{ color:#1d4ed8; text-decoration:underline; }
+.msg-bubble a{ color:#4c36a5; text-decoration:underline; }
 
 /* meta time */
 .msg-meta{ font-size: 11px; color: var(--muted); margin-top: 4px; padding: 0 2px; }
@@ -123,7 +123,7 @@
     background: #eaecef; color:#374151; display:grid; place-items:center;
 }
 
-/* ===== Suggestion Cards giữ nguyên nhưng chỉnh nhẹ ===== */
+/* Suggestion Cards */
 .suggestion-grid{
     display:grid; grid-template-columns: repeat(1,1fr); gap:10px; width:100%;
 }

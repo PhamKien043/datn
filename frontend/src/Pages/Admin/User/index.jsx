@@ -110,7 +110,7 @@ function User() {
 
       <div className="header-section">
         <h2>👥 Quản lý Users</h2>
-        <button className="btn-add" onClick={() => navigate("/admin/users/add")}>
+        <button className="btn-add" onClick={() => navigate("/admin/addUser")}>
           + Thêm Mới
         </button>
       </div>

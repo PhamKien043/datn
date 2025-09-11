@@ -16,7 +16,7 @@ import {
     Alert,
     Form,
 } from "react-bootstrap";
-import { Bar, Pie } from "react-chartjs-2";
+import { Bar, Pie, Doughnut } from "react-chartjs-2";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -62,6 +62,9 @@ const Dashboard = () => {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showDetail, setShowDetail] = useState(false);
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10));
+    const [orderStatusRatio, setOrderStatusRatio] = useState({ total_orders: 0, data: [] });
+    const [topCustomers, setTopCustomers] = useState([]);
+
 
     // loading + error
     const [loading, setLoading] = useState(true);
@@ -84,6 +87,8 @@ const Dashboard = () => {
                     usersRes,
                     recentOrdersRes,
                     recentActivitiesRes,
+                    orderStatusRatioRes,
+                    topCustomersRes,
                 ] = await Promise.all([
                     axios.get(`${API_BASE}/overview`),
                     axios.get(`${API_BASE}/revenue-monthly`),
@@ -96,6 +101,8 @@ const Dashboard = () => {
                     axios.get(`${API_BASE}/users`),
                     axios.get(`${API_BASE}/recent-orders`),
                     axios.get(`${API_BASE}/recent-activities`),
+                    axios.get(`${API_BASE}/order-status-ratio`),
+                    axios.get(`${API_BASE}/top-customers`),
                 ]);
 
                 setOverview(overviewRes.data);
@@ -104,12 +111,21 @@ const Dashboard = () => {
                 setTopServices(topServicesRes.data || []);
                 setTopRooms(topRoomsRes.data || []);
                 setTopMenus(topMenusRes.data || []);
-
                 setRoomSchedule(roomScheduleRes.data.rooms || []);
                 setPaymentMethods(paymentMethodsRes.data || {});
                 setTotalUsers(usersRes.data?.total_users || 0);
-                setRecentOrders(recentOrdersRes.data?.slice(0, 5) || []);
+                const sortedOrders = [...(recentOrdersRes.data || [])]
+                    .sort((a, b) => new Date(b.date) - new Date(a.date))
+                    .map(order => ({
+                        ...order,
+                        date: formatDate(order.date)
+                    }));
+                setRecentOrders(sortedOrders.slice(0, 5));
+
                 setRecentActivities(recentActivitiesRes.data || []);
+                setOrderStatusRatio(orderStatusRatioRes.data || { total_orders: 0, data: [] });
+                setTopCustomers(topCustomersRes.data.top_customers || []);
+
             } catch (err) {
                 setError("Lỗi khi tải dữ liệu dashboard!");
                 console.error(err);
@@ -127,6 +143,12 @@ const Dashboard = () => {
 
     const formatMoney = (val) =>
         Number(val || 0).toLocaleString("vi-VN") + "₫";
+
+    const formatDate = (isoDate) => {
+        const [year, month, day] = isoDate.split("-");
+        return `${parseInt(day)}-${parseInt(month)}-${year}`;
+    };
+
 
     // Chart data
     const monthlyData = {
@@ -151,6 +173,7 @@ const Dashboard = () => {
         ],
     };
 
+
     const pieData = {
         labels: Object.keys(paymentMethods || {}),
         datasets: [
@@ -161,6 +184,54 @@ const Dashboard = () => {
             },
         ],
     };
+
+    // Màu theo trạng thái (khớp badge của Bootstrap)
+    const STATUS_UI = {
+        pending: { label: "Chờ xác nhận", color: "#ffc107" }, // warning
+        deposit_paid: { label: "Đã đặt cọc 30%", color: "#0dcaf0" }, // info
+        confirmed: { label: "Đã xác nhận & chờ thực hiện", color: "#0d6efd" }, // primary
+        awaiting_balance: { label: "Chờ thanh toán 70%", color: "#fd7e14" }, // orange-ish
+        completed: { label: "Dịch vụ hoàn tất", color: "#198754" }, // success
+        failed: { label: "Thanh toán thất bại", color: "#dc3545" }, // danger
+        cancelled: { label: "Đã hủy", color: "#6c757d" }, // secondary
+    };
+
+    // Data cho Doughnut: tỉ lệ đơn hàng theo trạng thái
+    const statusLabels = (orderStatusRatio.data || []).map((i) => i.text);
+    const statusValues = (orderStatusRatio.data || []).map((i) => i.count);
+    const statusColors = (orderStatusRatio.data || []).map(
+        (i) => STATUS_UI[i.status]?.color || "#999999"
+    );
+
+    const orderStatusDoughnutData = {
+        labels: statusLabels,
+        datasets: [
+            {
+                data: statusValues,
+                backgroundColor: statusColors,
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    const orderStatusDoughnutOptions = {
+        plugins: {
+            legend: { position: "bottom" },
+            tooltip: {
+                callbacks: {
+                    label: (ctx) => {
+                        const label = ctx.label || "";
+                        const value = ctx.parsed || 0;
+                        const total = statusValues.reduce((a, b) => a + b, 0) || 1;
+                        const pct = ((value / total) * 100).toFixed(2);
+                        return `${label}: ${value} (${pct}%)`;
+                    }
+                }
+            },
+        },
+        cutout: "60%", // Doughnut style
+    };
+
 
     const StatCard = ({ title, value }) => (
         <Card className="mb-3 shadow-sm h-100 text-center">
@@ -175,14 +246,18 @@ const Dashboard = () => {
 
     const getStatusInfo = (status) => {
         const statusMap = {
-            pending: { label: "Chờ xử lý", color: "orange" },
-            confirmed: { label: "Đã xác nhận", color: "blue" },
-            completed: { label: "Hoàn thành", color: "green" },
-            cancelled: { label: "Đã hủy", color: "red" },
+            pending: { label: "Chờ xác nhận", color: "warning" },
+            deposit_paid: { label: "Đã đặt cọc 30%", color: "info" },
+            confirmed: { label: "Đã xác nhận & chờ thực hiện", color: "primary" },
+            awaiting_balance: { label: "Chờ thanh toán 70%", color: "warning" },
+            completed: { label: "Hoàn thành", color: "success" },
+            failed: { label: "Thanh toán thất bại", color: "danger" },
+            cancelled: { label: "Đã hủy", color: "secondary" },
         };
 
         return statusMap[status] || { label: "Không xác định", color: "secondary" };
     };
+
 
 
 
@@ -283,6 +358,69 @@ const Dashboard = () => {
                     </Col>
                 </Row>
 
+
+                {/* Tỉ lệ đơn hàng theo trạng thái */}
+                <Row className="mb-4">
+                    <Col md={5}>
+                        <Card className="shadow-sm">
+                            <Card.Body>
+                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                    <h5>Tỉ lệ đơn hàng theo trạng thái</h5>
+                                    <Badge bg="light" text="dark">
+                                        Tổng: {orderStatusRatio.total_orders || 0}
+                                    </Badge>
+                                </div>
+
+                                {orderStatusRatio.total_orders > 0 ? (
+                                    <Doughnut
+                                        data={orderStatusDoughnutData}
+                                        options={orderStatusDoughnutOptions}
+                                    />
+                                ) : (
+                                    <p>Chưa có dữ liệu</p>
+                                )}
+                            </Card.Body>
+                        </Card>
+                    </Col>
+
+                    <Col md={7}>
+                        <Card className="shadow-sm">
+                            <Card.Body>
+                                <h5>Chi tiết trạng thái</h5>
+                                <Table striped hover size="sm" className="mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Trạng thái</th>
+                                            <th className="text-end">Số đơn</th>
+                                            <th className="text-end">Tỷ lệ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {(orderStatusRatio.data || []).map((s) => (
+                                            <tr key={s.status}>
+                                                <td>
+                                                    <span
+                                                        className="d-inline-block rounded-circle me-2"
+                                                        style={{
+                                                            width: 10,
+                                                            height: 10,
+                                                            background: STATUS_UI[s.status]?.color || "#999999",
+                                                        }}
+                                                    />
+                                                    {s.text}
+                                                </td>
+                                                <td className="text-end">{s.count}</td>
+                                                <td className="text-end">{Number(s.percentage).toFixed(2)}%</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </Table>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                </Row>
+
+
                 {/* Hoạt động gần đây */}
                 <Row>
                     <Col>
@@ -295,8 +433,8 @@ const Dashboard = () => {
                                             {getActivityIcon(activity.title)}
                                         </div>
                                         <div>
-                                            
-                        <div className="fw-medium text-dark">{activity.title}</div>
+
+                                            <div className="fw-medium text-dark">{activity.title}</div>
                                             <small className="text-muted">{activity.time}</small>
                                         </div>
                                     </div>
@@ -306,26 +444,36 @@ const Dashboard = () => {
                     </Col>
                 </Row>
 
-                {/* Top Services & Rooms */}
+
                 <Row className="mb-4">
                     <Col md={6}>
                         <Card className="shadow-sm">
                             <Card.Body>
-                                <h5>Dịch vụ đặt nhiều nhất</h5>
-                                <Table striped size="sm">
+                                <h5>Top khách hàng đem lại doanh thu cao nhất</h5>
+                                <Table striped size="sm" responsive>
                                     <thead>
-                                    <tr>
-                                        <th>Tên dịch vụ</th>
-                                        <th>Lượt đặt</th>
-                                    </tr>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Tên khách hàng</th>
+                                            <th>Số đơn</th>
+                                            <th>Doanh thu</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
-                                    {topServices.map((item, i) => (
-                                        <tr key={i}>
-                                            <td>{item.name}</td>
-                                            <td>{item.total}</td>
-                                        </tr>
-                                    ))}
+                                        {topCustomers.length > 0 ? (
+                                            topCustomers.map((cust, i) => (
+                                                <tr key={cust.id}>
+                                                    <td>{i + 1}</td>
+                                                    <td>{cust.name}</td>
+                                                    <td>{cust.total_orders}</td>
+                                                    <td>{formatMoney(cust.total_revenue)}</td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan={4} className="text-center">Chưa có dữ liệu</td>
+                                            </tr>
+                                        )}
                                     </tbody>
                                 </Table>
                             </Card.Body>
@@ -337,24 +485,25 @@ const Dashboard = () => {
                                 <h5>Phòng đặt nhiều nhất</h5>
                                 <Table striped size="sm">
                                     <thead>
-                                    <tr>
-                                        <th>Tên phòng</th>
-                                        <th>Lượt đặt</th>
-                                    </tr>
+                                        <tr>
+                                            <th>Tên phòng</th>
+                                            <th>Lượt đặt</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
-                                    {topRooms.map((item, i) => (
-                                        <tr key={i}>
-                                            <td>{item.name}</td>
-                                            <td>{item.total}</td>
-                                        </tr>
-                                    ))}
+                                        {topRooms.map((item, i) => (
+                                            <tr key={i}>
+                                                <td>{item.name}</td>
+                                                <td>{item.total}</td>
+                                            </tr>
+                                        ))}
                                     </tbody>
                                 </Table>
                             </Card.Body>
                         </Card>
                     </Col>
                 </Row>
+
 
                 {/* Top Menus & Room Schedule */}
                 <Row className="mb-4">
@@ -393,28 +542,28 @@ const Dashboard = () => {
                                 </div>
                                 <Table striped size="sm">
                                     <thead>
-                                    <tr>
-                                        <th>Phòng</th>
-                                        <th>Sáng</th>
-                                        <th>Chiều</th>
-                                    </tr>
+                                        <tr>
+                                            <th>Phòng</th>
+                                            <th>Sáng</th>
+                                            <th>Chiều</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
-                                    {roomSchedule.map((room, i) => (
-                                        <tr key={i}>
-                                            <td>{room.room_name}</td>
-                                            <td>
-                                                <Badge bg={room.morning === "Đã đặt" ? "danger" : "success"}>
-                                                    {room.morning}
-                                                </Badge>
-                                            </td>
-                                            <td>
-                                                <Badge bg={room.afternoon === "Đã đặt" ? "danger" : "success"}>
-                                                    {room.afternoon}
-                                                </Badge>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                        {roomSchedule.map((room, i) => (
+                                            <tr key={i}>
+                                                <td>{room.room_name}</td>
+                                                <td>
+                                                    <Badge bg={room.morning === "Đã đặt" ? "danger" : "success"}>
+                                                        {room.morning}
+                                                    </Badge>
+                                                </td>
+                                                <td>
+                                                    <Badge bg={room.afternoon === "Đã đặt" ? "danger" : "success"}>
+                                                        {room.afternoon}
+                                                    </Badge>
+                                                </td>
+                                            </tr>
+                                        ))}
                                     </tbody>
                                 </Table>
                             </Card.Body>
@@ -431,42 +580,42 @@ const Dashboard = () => {
                                 <h5>5 đơn hàng gần đây</h5>
                                 <Table striped size="sm" responsive>
                                     <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Khách hàng</th>
-                                        <th>Trạng thái</th>
-                                        <th>Ngày</th>
-                                        <th>Tổng tiền</th>
-                                        <th>Chi tiết</th>
-                                    </tr>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Khách hàng</th>
+                                            <th>Trạng thái</th>
+                                            <th>Ngày</th>
+                                            <th>Tổng tiền</th>
+                                            <th>Chi tiết</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
-                                    {recentOrders.map((order, i) => {
-                                        const { label, color } = getStatusInfo(order.status);
-                                        return (
-                                            <tr key={i}>
-                                                <td>{order.id}</td>
-                                                <td>{order.user_name}</td>
-                                                <td>
-                                                    <Badge bg={color}>{label}</Badge>
-                                                </td>
-                                                <td>{order.date}</td>
-                                                <td>{formatMoney(order.total_amount)}</td>
-                                                <td>
-                                                    <Button
-                                                        variant="outline-primary"
-                                                        size="sm"
-                                                        onClick={() => {
-                                                            setSelectedOrder(order);
-                                                            setShowDetail(true);
-                                                        }}
-                                                    >
-                                                        Xem
-                                                    </Button>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
+                                        {recentOrders.map((order, i) => {
+                                            const { label, color } = getStatusInfo(order.status);
+                                            return (
+                                                <tr key={i}>
+                                                    <td>{order.id}</td>
+                                                    <td>{order.user_name}</td>
+                                                    <td>
+                                                        <Badge bg={color}>{label}</Badge>
+                                                    </td>
+                                                    <td>{order.date}</td>
+                                                    <td>{formatMoney(order.total_amount)}</td>
+                                                    <td>
+                                                        <Button
+                                                            variant="outline-primary"
+                                                            size="sm"
+                                                            onClick={() => {
+                                                                setSelectedOrder(order);
+                                                                setShowDetail(true);
+                                                            }}
+                                                        >
+                                                            Xem
+                                                        </Button>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
                                     </tbody>
 
                                 </Table>

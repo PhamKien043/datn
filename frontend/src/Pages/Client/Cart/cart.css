@@ -1,0 +1,29 @@
+/* cart.css - theme xanh tím */
+.text-purple {
+  color: #6f42c1 !important;
+}
+
+.btn-purple {
+  background-color: #6f42c1;
+  border-color: #6f42c1;
+  color: white;
+  transition: 0.2s;
+}
+
+.btn-purple:hover {
+  background-color: #5a32a3;
+  border-color: #5a32a3;
+  color: white;
+}
+
+.btn-outline-purple {
+  border: 1px solid #6f42c1;
+  color: #6f42c1;
+  background: transparent;
+  transition: 0.2s;
+}
+
+.btn-outline-purple:hover {
+  background-color: #6f42c1;
+  color: white;
+}

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\RoomSlot;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
@@ -134,7 +135,6 @@ class OrderController extends Controller
                 ], 404);
             }
 
-            // Tính toán an toàn
             $total   = (int) ($order->total_amount ?? 0);
             $deposit = (int) ($order->deposit_amount ?? round($total * 0.3));
             $balance = (int) ($order->balance_amount ?? max(0, $total - $deposit));
@@ -145,7 +145,6 @@ class OrderController extends Controller
                 'method'         => $order->method,
                 'date'           => $order->date,
                 'time'           => $order->time,
-                // dùng optional() để tránh lỗi khi created_at null/Carbon version cũ
                 'createdAt'      => optional($order->created_at)->toIso8601String(),
                 'user'           => $order->user ? [
                     'id'    => $order->user->id,
@@ -163,7 +162,6 @@ class OrderController extends Controller
                     'type'            => $order->voucher->type,
                     'value'           => (float) $order->voucher->value,
                     'min_order_total' => (int) ($order->voucher->min_order_total ?? 0),
-                    // nếu DB không có cột discount_amount thì để 0
                     'discount_amount' => (int) ($order->discount_amount ?? 0),
                 ] : null,
 
@@ -181,7 +179,7 @@ class OrderController extends Controller
                         'menu'     => $d->menu,
                         'service'  => $d->service,
                         'room'     => $d->room,
-                        'Product'  => $product, // nếu FE vẫn tham chiếu trường này
+                        'Product'  => $product,
                     ];
                 })->values(),
             ];
@@ -223,7 +221,7 @@ class OrderController extends Controller
                 'details.*.menu_id' => 'nullable|exists:menus,id',
                 'details.*.service_id' => 'nullable|exists:services,id',
                 'details.*.room_id' => 'nullable|exists:rooms,id',
-                'details.*.room_slot_id' => 'nullable|exists:room_slots,id', // ✅ thêm
+                'details.*.room_slot_id' => 'nullable|exists:room_slots,id',
                 'voucher_id' => 'nullable|exists:vouchers,id',
             ], [
                 'date.required' => 'Ngày đặt hàng không được để trống',
@@ -243,18 +241,15 @@ class OrderController extends Controller
                 ], 422);
             }
 
-            // Tính tổng tiền
             $totalAmount = collect($request->details)->sum(function ($detail) {
                 return $detail['quantity'] * $detail['price'];
             });
 
-            // Áp dụng giảm giá voucher nếu có
             $voucher = $request->voucher_id ? \App\Models\Voucher::find($request->voucher_id) : null;
             if ($voucher) {
                 $totalAmount = max(0, $totalAmount - $voucher->discount_amount);
             }
 
-            // Tạo đơn hàng
             $order = Order::create([
                 'user_id' => $userId,
                 'total_amount' => $totalAmount,
@@ -265,22 +260,19 @@ class OrderController extends Controller
                 'method' => $request->method,
             ]);
 
-            // Tạo chi tiết đơn hàng
             foreach ($request->details as $detail) {
                 OrderDetail::create([
                     'order_id'     => $order->id,
                     'menu_id'      => $detail['menu_id'] ?? null,
                     'service_id'   => $detail['service_id'] ?? null,
                     'room_id'      => $detail['room_id'] ?? null,
-                    'room_slot_id' => $detail['room_slot_id'] ?? null, // ✅ thêm
+                    'room_slot_id' => $detail['room_slot_id'] ?? null,
                     'quantity'     => $detail['quantity'],
                     'price'        => $detail['price'],
                 ]);
-
             }
 
             DB::commit();
-
 
             $order->load(['details.menu', 'details.service', 'details.room', 'voucher']);
 
@@ -358,6 +350,7 @@ class OrderController extends Controller
                 'details.*.menu_id' => 'nullable|exists:menus,id',
                 'details.*.service_id' => 'nullable|exists:services,id',
                 'details.*.room_id' => 'nullable|exists:rooms,id',
+                'details.*.room_slot_id' => 'nullable|exists:room_slots,id', // ✅ thêm
             ]);
 
             if ($validator->fails()) {
@@ -370,6 +363,18 @@ class OrderController extends Controller
 
             // Cập nhật đơn hàng
             $order->update($request->only(['date', 'time', 'method', 'status', 'voucher_id']));
+
+            // Giải phóng lịch đặt nếu hủy đơn hàng
+            if ($request->status === 'cancelled') {
+                foreach ($order->details as $detail) {
+                    if ($detail->room_slot_id) {
+                        RoomSlot::where('id', $detail->room_slot_id)->update([
+                            'status'   => 'available',
+                            'order_id' => null
+                        ]);
+                    }
+                }
+            }
 
             // Cập nhật chi tiết đơn hàng nếu có
             if ($request->has('details')) {
@@ -384,7 +389,6 @@ class OrderController extends Controller
 
                 $order->update(['total_amount' => $totalAmount]);
 
-                // Xóa chi tiết cũ và tạo mới
                 $order->details()->delete();
                 foreach ($request->details as $detail) {
                     OrderDetail::create([
@@ -392,6 +396,7 @@ class OrderController extends Controller
                         'menu_id' => $detail['menu_id'] ?? null,
                         'service_id' => $detail['service_id'] ?? null,
                         'room_id' => $detail['room_id'] ?? null,
+                        'room_slot_id' => $detail['room_slot_id'] ?? null,
                         'quantity' => $detail['quantity'],
                         'price' => $detail['price'],
                     ]);
@@ -450,58 +455,12 @@ class OrderController extends Controller
 
     public function destroy($id): JsonResponse
     {
-        DB::beginTransaction();
-        try {
-            $userId = request()->query('user_id');
-            if (!$userId || !is_numeric($userId)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'User ID không hợp lệ',
-                ], 400);
-            }
-
-            $order = Order::where('user_id', $userId)->find($id);
-
-            if (!$order) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Không tìm thấy đơn hàng',
-                ], 404);
-            }
-
-            // Chỉ cho phép xóa đơn hàng ở trạng thái pending hoặc cancelled
-            if (!in_array($order->status, ['pending', 'cancelled'])) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Không thể xóa đơn hàng ở trạng thái hiện tại',
-                ], 403);
-            }
-
-            $order->delete();
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Xóa đơn hàng thành công',
-            ], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Error deleting order', [
-                'order_id' => $id,
-                'user_id' => $userId ?? 'unknown',
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Có lỗi xảy ra khi xóa đơn hàng',
-            ], 500);
-        }
+        return response()->json([
+            'success' => false,
+            'message' => 'Không hỗ trợ xóa đơn hàng, chỉ có thể hủy đơn',
+        ], 403);
     }
 
-    /**
-     * Normalize payment method for consistent display
-     */
     private function normalizePaymentMethod($method)
     {
         switch (strtolower($method)) {

@@ -40,7 +40,7 @@ function ForgotPassword() {
   return (
     <div className="forgot-password-wrapper">
       <div className="forgot-password-card card shadow p-4">
-        <h3 className="text-center mb-4 text-primary">Quên mật khẩu</h3>
+        <h3 className="text-center mb-4 ">Quên mật khẩu</h3>
         
         {!submitted ? (
           <>

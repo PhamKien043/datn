@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { fetchComments, postComment } from "../../../services/commentService";
+import {
+  fetchComments,
+  postComment,
+  updateComment,
+  deleteComment,
+} from "../../../services/commentService";
 import { toast } from "react-toastify";
 
 function StarRating({ rating }) {
@@ -38,8 +43,10 @@ export default function ServiceComments({ serviceId, currentUser }) {
   const [rating, setRating] = useState(5);
   const [loading, setLoading] = useState(false);
   const [hover, setHover] = useState(0);
+  const [editingId, setEditingId] = useState(null);
+  const [editContent, setEditContent] = useState("");
+  const [editRating, setEditRating] = useState(5);
 
-  // Load danh sách bình luận theo serviceId
   useEffect(() => {
     (async () => {
       try {
@@ -53,9 +60,9 @@ export default function ServiceComments({ serviceId, currentUser }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!currentUser?.id) return toast.error("Khách hàng cần đăng nhập để bình luận.");
-    if (!newComment.trim()) return toast.error("Vui lòng nhập bình luận.");
-    if (!rating) return toast.error("Vui lòng chọn số sao đánh giá.");
+    if (!currentUser?.id) return toast.error("Bạn cần đăng nhập.");
+    if (!newComment.trim()) return toast.error("Vui lòng nhập nội dung.");
+    if (!rating) return toast.error("Vui lòng chọn sao đánh giá.");
 
     const payload = {
       content: newComment.trim(),
@@ -68,27 +75,68 @@ export default function ServiceComments({ serviceId, currentUser }) {
     try {
       const res = await postComment(payload);
       if (res?.success) {
-        // Ưu tiên dùng dữ liệu server trả về (đã có created_at, user, ...)
         setComments((prev) => [res.data, ...prev]);
         setNewComment("");
         setRating(5);
         setHover(0);
         toast.success("Gửi bình luận thành công!");
       } else {
-        toast.error(res?.message || "Khách hàng chưa đủ điều kiện để bình luận.");
+        toast.error(res?.message || "Không thể gửi bình luận.");
       }
     } catch (err) {
-      const msg =
-        err?.response?.data?.message ||
-        "Lỗi khi gửi bình luận.";
+      const msg = err?.response?.data?.message || "Lỗi khi gửi bình luận.";
       toast.error(msg);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleEdit = (comment) => {
+    setEditingId(comment.id);
+    setEditContent(comment.content);
+    setEditRating(comment.rating);
+  };
+
+const handleUpdate = async () => {
+  if (!editContent.trim()) return toast.error("Nội dung không được trống.");
+  try {
+    const res = await updateComment(editingId, {
+      content: editContent,
+      rating: editRating,
+      user_id: currentUser.id,
+    });
+    if (res?.success) {
+      // Cập nhật comment trong state với dữ liệu trả về, bao gồm updated_at mới
+     setComments((prev) =>
+  prev.map((c) => (c.id === editingId ? { ...c, ...res.data, user: c.user } : c))
+);
+
+      toast.success("Cập nhật bình luận thành công!");
+      setEditingId(null);
+      setEditContent("");
+      setEditRating(5); // reset rating khi kết thúc chỉnh sửa
+    }
+  } catch (err) {
+    toast.error("Lỗi khi cập nhật bình luận.");
+  }
+};
+
+
+  const handleDelete = async (commentId) => {
+    if (!window.confirm("Bạn có chắc muốn xóa bình luận này?")) return;
+    try {
+      const res = await deleteComment(commentId, currentUser.id);
+      if (res?.success) {
+        setComments((prev) => prev.filter((c) => c.id !== commentId));
+        toast.success("Xóa bình luận thành công!");
+      }
+    } catch {
+      toast.error("Lỗi khi xóa bình luận.");
+    }
+  };
+
   return (
-    <div style={{ width: "80%", margin: "auto", fontSize: 18, lineHeight: 1.6 }}>
+    <div style={{ width: "80%", margin: "auto", fontSize: 18 }}>
       <h4 style={{ fontWeight: 700, fontSize: 24, marginBottom: 24 }}>
         Bình luận & Đánh giá
       </h4>
@@ -134,18 +182,15 @@ export default function ServiceComments({ serviceId, currentUser }) {
                 key={i}
                 role="button"
                 tabIndex={0}
-                aria-label={`${i} sao`}
                 onClick={() => !loading && setRating(i)}
                 onMouseEnter={() => !loading && setHover(i)}
                 onMouseLeave={() => !loading && setHover(0)}
-                onKeyDown={(e) => e.key === "Enter" && !loading && setRating(i)}
                 style={{
                   cursor: loading ? "not-allowed" : "pointer",
                   color: i <= (hover || rating) ? "#f5b50a" : "#ddd",
                   fontSize: 28,
                   marginRight: 8,
                   userSelect: "none",
-                  transition: "color 0.15s ease",
                 }}
               >
                 ★
@@ -164,57 +209,129 @@ export default function ServiceComments({ serviceId, currentUser }) {
         </form>
       ) : (
         <p style={{ fontSize: 18, fontStyle: "italic", color: "#555" }}>
-          Khách hàng cần đăng nhập để bình luận.
+          Bạn cần đăng nhập để bình luận.
         </p>
       )}
 
       <hr />
 
-      {comments.filter(c => c.status === 1).length === 0 ? (
+      {comments.filter((c) => c.status === 1).length === 0 ? (
         <p style={{ color: "#777" }}>Chưa có bình luận nào.</p>
       ) : (
-       comments.filter(c => c.status === 1).map((c) => (
-          <div
-            key={c.id}
-            className="d-flex mb-3"
-            style={{
-              gap: 12,
-              boxShadow: "0 1px 6px rgba(0,0,0,0.08)",
-              padding: 12,
-              borderRadius: 8,
-              backgroundColor: "#fafafa",
-              alignItems: "flex-start",
-              fontSize: 16,
-            }}
-          >
-            <img
-              src={
-                c.user?.avatar
-                  ? `/storage/avatars/${c.user.avatar}`
-                  : "https://cdn-icons-png.flaticon.com/512/607/607417.png"
-              }
-              alt={c.user?.name || "User"}
-              className="rounded-circle"
-              width={56}
-              height={56}
-              style={{ objectFit: "cover", border: "2px solid #f5b50a" }}
-            />
-            <div style={{ flex: 1 }}>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <strong style={{ fontSize: 17, color: "#333" }}>
-                  {c.user?.name || "Người dùng"}
-                </strong>
-                <small style={{ color: "#999" }}>
-                  {c.created_at ? timeAgo(c.created_at) : ""}
-                </small>
+        comments
+          .filter((c) => c.status === 1)
+          .map((c) => (
+            <div
+              key={c.id}
+              className="d-flex mb-3"
+              style={{
+                gap: 12,
+                boxShadow: "0 1px 6px rgba(0,0,0,0.08)",
+                padding: 12,
+                borderRadius: 8,
+                backgroundColor: "#fafafa",
+                alignItems: "flex-start",
+                fontSize: 16,
+              }}
+            >
+              <img
+                src={
+                  c.user?.avatar
+                    ? `/storage/avatars/${c.user.avatar}`
+                    : "https://cdn-icons-png.flaticon.com/512/607/607417.png"
+                }
+                alt={c.user?.name || "User"}
+                className="rounded-circle"
+                width={56}
+                height={56}
+                style={{ objectFit: "cover", border: "2px solid #f5b50a" }}
+              />
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <strong style={{ fontSize: 17, color: "#333" }}>
+                    {c.user?.name || "Người dùng"}
+                  </strong>
+               <small style={{ color: "#999" }}>
+  {c.updated_at ? timeAgo(c.updated_at) : (c.created_at ? timeAgo(c.created_at) : "")}
+  {c.updated_at && c.updated_at !== c.created_at && (
+    <span style={{ marginLeft: 8, fontStyle: "italic", fontSize: 13, color: "#888" }}>
+      (Đã chỉnh sửa)
+    </span>
+  )}
+</small>
+
+
+                </div>
+
+                {editingId === c.id ? (
+                  <>
+                    <textarea
+                      rows={3}
+                      value={editContent}
+                      onChange={(e) => setEditContent(e.target.value)}
+                      style={{
+                        width: "100%",
+                        borderRadius: 4,
+                        padding: 6,
+                        marginTop: 6,
+                        fontSize: 16,
+                      }}
+                    />
+                    <div style={{ margin: "8px 0" }}>
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <span
+                          key={i}
+                          onClick={() => setEditRating(i)}
+                          style={{
+                            cursor: "pointer",
+                            color: i <= editRating ? "#f5b50a" : "#ddd",
+                            fontSize: 20,
+                          }}
+                        >
+                          ★
+                        </span>
+                      ))}
+                    </div>
+                    <div>
+                      <button onClick={handleUpdate} className="btn btn-success btn-sm me-2">
+                        Lưu
+                      </button>
+                      <button
+                        onClick={() => setEditingId(null)}
+                        className="btn btn-secondary btn-sm"
+                      >
+                        Huỷ
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <StarRating rating={Number(c.rating) || 0} />
+                    <p style={{ whiteSpace: "pre-line", color: "#555", marginTop: 4 }}>
+                      {c.content}
+                    </p>
+
+                    {currentUser?.id === c.user_id && (
+                      <div style={{ marginTop: 8 }}>
+                        <button
+                          className="btn btn-outline-primary btn-sm me-2"
+                          onClick={() => handleEdit(c)}
+                        >
+                          Sửa
+                        </button>
+                        <button
+                          className="btn btn-outline-danger btn-sm"
+                          onClick={() => handleDelete(c.id)}
+                        >
+                          Xóa
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
-              <StarRating rating={Number(c.rating) || 0} />
-              <p style={{ whiteSpace: "pre-line", color: "#555", marginTop: 4 }}>
-                {c.content}
-              </p>
             </div>
-          </div>
-        ))
+          ))
       )}
     </div>
   );

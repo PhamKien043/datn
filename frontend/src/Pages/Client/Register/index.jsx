@@ -51,7 +51,7 @@ function Register() {
   return (
       <div className="register-wrapper">
         <div className="register-card card shadow p-4">
-          <h3 className="text-center mb-4 text-primary">Đăng ký</h3>
+          <h3 className="text-center mb-4 ">Đăng ký</h3>
 
           <div className="mb-3">
             <GoogleLoginButton />

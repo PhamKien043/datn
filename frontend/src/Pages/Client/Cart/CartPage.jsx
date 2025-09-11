@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getUserFromStorage } from "../../../services/authService.js";
+import "./cart.css"
 
 function CartPage() {
     const [cartItems, setCartItems] = useState([]);

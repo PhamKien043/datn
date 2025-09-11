@@ -38,7 +38,9 @@ use App\Http\Controllers\Api\WithdrawRequestController;
 
 
 // routes/web.php (hoặc api.php nếu đang phục vụ qua /api)
-Route::get('/phpinfo', function () { phpinfo(); });
+Route::get('/phpinfo', function () {
+    phpinfo();
+});
 
 
 Route::post('/auth/login', [AuthController::class, 'login']);
@@ -67,7 +69,6 @@ Route::get('/users/check-unique', [UserController::class, 'checkUnique']);
 // Chỉ admin (role=true)
 Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('/dashboard', fn () => response()->json(['ok' => true]));
-
 });
 
 // Blog
@@ -80,7 +81,6 @@ Route::prefix('admin')->group(function () {
     Route::post('/blog/check-name', [BlogAdminController::class, 'checkTitle']);
 });
 
-//Email
 //Email
 Route::prefix('admin')->group(function () {
     Route::get('/email', [EmailAdminController::class, 'index']);
@@ -208,6 +208,8 @@ Route::group([], function () {
 
 //admin đơn hàng
 Route::group(['prefix' => 'admin'], function () {
+    Route::get('/orders/unread-count', [AdminOrderController::class, 'getUnreadCount']);
+    Route::post('/orders/mark-all-read', [AdminOrderController::class, 'markAllRead']);
     Route::get('/orders', [AdminOrderController::class, 'index']);
     Route::get('/orders/{id}', [AdminOrderController::class, 'show']);
     Route::put('/orders/{id}', [AdminOrderController::class, 'update']);
@@ -247,8 +249,7 @@ Route::prefix('admin')->group(function () {
     Route::post('/category_menus/check-name', [CategoryMenuAdminController::class, 'checkName']);
 
     // Menus
-    Route::apiResource('/menus', MenuAdminController::class);
-    ;
+    Route::apiResource('/menus', MenuAdminController::class);;
     Route::post('/menus/check-name', [MenuAdminController::class, 'checkName']);
 
     // Location types
@@ -300,7 +301,6 @@ Route::prefix('statistics')->controller(StatisticController::class)->group(funct
     // Thống kê đơn hàng theo trạng thái
     Route::get('/order-status-ratio', 'orderStatusRatio');
     Route::get('/top-customers', 'topCustomers');
-
 });
 
 
@@ -308,4 +308,3 @@ Route::prefix('statistics')->controller(StatisticController::class)->group(funct
 Route::get('auth/google', [GoogleAuthController::class, 'redirectToGoogle']);
 Route::get('auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
 Route::post('auth/google/token', [GoogleAuthController::class, 'loginWithGoogleToken']);
-

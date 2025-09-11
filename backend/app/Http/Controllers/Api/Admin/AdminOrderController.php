@@ -457,4 +457,43 @@ class AdminOrderController extends Controller
             ], 500);
         }
     }
+
+    // Lấy số đơn hàng chưa đọc
+    public function getUnreadCount()
+    {
+        $count = Order::where('is_read', false)->count();
+        return response()->json(['count' => $count]);
+    }
+
+    // Đánh dấu đơn hàng là đã đọc
+    public function markRead($id)
+    {
+        $order = Order::find($id);
+
+        if (!$order) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Đơn hàng không tồn tại',
+            ], 404);
+        }
+
+        $order->is_read = true;
+        $order->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Đã cập nhật trạng thái đơn hàng',
+        ]);
+    }
+
+    // Đánh dấu tất cả đơn hàng là đã đọc
+    public function markAllRead()
+    {
+        Order::where('is_read', false)->update(['is_read' => true]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Tất cả đơn hàng đã được đánh dấu là đã đọc'
+        ]);
+    }
 }

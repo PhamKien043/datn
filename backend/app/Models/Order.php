@@ -3,9 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
 {
+    use HasFactory;
+
+    protected $table = 'orders';
+
     protected $fillable = [
         'user_id',
         'total_amount',
@@ -20,13 +25,15 @@ class Order extends Model
         'payment_data',
         'momo_order_id',
         'vnpay_order_id',
-        'room_slot_id', // 👈 thêm cột này để liên kết order với room_slots
+        'room_slot_id',
+        'is_read',
     ];
 
     protected $casts = [
         'total_amount'   => 'int',
         'deposit_amount' => 'int',
         'balance_amount' => 'int',
+        'is_read'        => 'boolean',
     ];
 
     public function details()
